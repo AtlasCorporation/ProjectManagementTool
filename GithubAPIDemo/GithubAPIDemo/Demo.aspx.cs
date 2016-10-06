@@ -23,12 +23,21 @@ namespace GithubAPIDemo
             try
             {
                 var client = new GitHubClient(new ProductHeaderValue("project-management-tool"));
-                var commitList = await client.Repository.Commit.GetAll(user, repo);
-                lblHeader.Text = "<h2>Löytyi " + commitList.Count + " committia:</h2>";
-                for (int i = 0; i < commitList.Count; i++)
+                        
+                //programming languages
+                var languages = await client.Repository.GetAllLanguages(user, repo);
+                lblLanguages.Text = "<ul>";
+                for (int i = 0; i < languages.Count; i++)
+                    lblLanguages.Text += "<li>" + languages[i].Name + "</li>";
+                lblLanguages.Text += "</ul>";
+
+                //commits
+                var commits = await client.Repository.Commit.GetAll(user, repo);
+                lblHeader.Text = "<h3>" + commits.Count + " commits:</h3>";
+                for (int i = 0; i < commits.Count; i++)
                 {
-                    lblCommitFeed.Text += commitList[i].Commit.Message + "<br/>";
-                    lblCommitFeed.Text += commitList[i].Commit.Committer.Name + " committed on " + commitList[i].Commit.Committer.Date.ToString("MM/dd/yyyy HH:mm") + "<hr/>";
+                    lblCommitFeed.Text += commits[i].Commit.Message + "<br/>";
+                    lblCommitFeed.Text += commits[i].Commit.Committer.Name + " committed on " + commits[i].Commit.Committer.Date.ToString("MM/dd/yyyy HH:mm") + "<hr/>";
                 }
             }
             catch (Exception ex)
@@ -44,7 +53,7 @@ namespace GithubAPIDemo
             if (!string.IsNullOrEmpty(user) && !string.IsNullOrEmpty(repo))
                 RegisterAsyncTask(new PageAsyncTask(GetDataFromGithub));
             else
-                lblMessages.Text = "Täytä kentät...";
+                lblMessages.Text = "Enter username and repository name.";
         }
     }
 }

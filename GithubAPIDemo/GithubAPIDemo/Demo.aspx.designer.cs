@@ -58,6 +58,24 @@ namespace GithubAPIDemo {
         protected global::System.Web.UI.WebControls.Label lblMessages;
         
         /// <summary>
+        /// lblLanguages control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblLanguages;
+        
+        /// <summary>
+        /// lblWiki control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblWiki;
+        
+        /// <summary>
         /// lblHeader control.
         /// </summary>
         /// <remarks>
