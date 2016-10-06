@@ -10,10 +10,11 @@
 </head>
 <body>
     <form id="form1" runat="server">
+        <asp:SqlDataSource ConnectionString="" ProviderName="" />
     <div>
         <asp:Chart ID="chartGANTT" runat="server" Height="153px">
             <Series>
-                <asp:Series Name="Series1" ChartType="Bar"></asp:Series>
+                <asp:Series Name="Series2" ChartType="Bar" LegendText="gfd"></asp:Series>
             </Series>
             <ChartAreas>
                 <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
