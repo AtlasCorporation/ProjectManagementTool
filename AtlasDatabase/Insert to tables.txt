@@ -1,0 +1,58 @@
+/*users*/
+INSERT INTO user (
+
+	username, password, firstname, 
+	lastname, created, modified, role
+)
+VALUES 
+(
+
+	'Esimerkki',
+'tepi', 
+'Erkki', 'Esimerkki', '2016-04-07 14:17:53', 
+'2016-04-07 14:17:53', 'user'
+);
+
+/*projects*/
+INSERT INTO project (
+	name,customer)
+VALUES(
+	'testiprojekti', 'harkkatyo');
+
+INSERT INTO project (
+	name,customer)
+VALUES(
+	'proj', 'harkkatyo');
+
+/*tasks*/
+INSERT INTO task(
+	project_id, name)
+VALUES(
+	1,'Dokumentaatio');
+
+INSERT INTO task(
+	task_id,project_id, name)
+VALUES(
+	1,1,'Wikipages');
+
+INSERT INTO task(
+	project_id, name)
+VALUES(
+	1,'Ohjelmointi');
+
+/*donetasks*/
+INSERT INTO donetask(
+	task_id,whodid,worktime,date)
+VALUES(
+	1, 'me', 4, '2016-04-07 14:17:53');
+
+INSERT INTO donetask(
+	task_id,whodid,worktime,date)
+VALUES(
+	3, 'me', 3, '2016-04-07 14:17:53');
+
+/*user_project*/
+INSERT INTO user_project(
+	user_id, project_id)
+VALUES(
+	1,1);
