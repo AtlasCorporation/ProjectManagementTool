@@ -1,0 +1,43 @@
+CREATE TABLE user ( 
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(50) NOT NULL UNIQUE,
+	password VARCHAR(255) NOT NULL,
+	firstname VARCHAR(50) NOT NULL,
+	lastname VARCHAR(50) NOT NULL,
+	created DATETIME,
+	modified DATETIME,
+	role VARCHAR(20) DEFAULT 'user'
+);
+
+CREATE TABLE project ( 
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(50) NOT NULL,
+	customer VARCHAR(255)
+);
+
+CREATE TABLE task ( 
+    id INT AUTO_INCREMENT PRIMARY KEY,
+	task_id INT,
+	project_id INT,
+	name VARCHAR(50),
+	FOREIGN KEY task_task_key(task_id) REFERENCES task(id),
+	FOREIGN KEY project_task_key (project_id) REFERENCES project(id)
+);
+
+CREATE TABLE donetask ( 
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ task_id INT NOT NULL,
+ whodid VARCHAR(255) NOT NULL,
+ worktime INT(2) NOT NULL,
+ date DATETIME,
+ FOREIGN KEY task_donetask_key (task_id) REFERENCES task(id)
+);
+
+CREATE TABLE user_project(
+user_id INT NOT NULL,
+project_id INT NOT NULL, 
+PRIMARY KEY (user_id, project_id),
+ FOREIGN KEY project_user_key(project_id) REFERENCES project(id),
+ FOREIGN KEY user_project_key(user_id) REFERENCES user(id)
+ );
+

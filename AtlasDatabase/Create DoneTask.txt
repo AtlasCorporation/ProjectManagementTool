@@ -1,0 +1,8 @@
+CREATE TABLE donetask ( 
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ task_id INT NOT NULL,
+ whodid VARCHAR(255) NOT NULL,
+ worktime INT(2) NOT NULL,
+ date DATETIME,
+ FOREIGN KEY task_donetask_key (task_id) REFERENCES task(id)
+);
