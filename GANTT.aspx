@@ -11,16 +11,23 @@
 <body>
     <!-- SELECT SUM(worktime) AS Ohjelmointi FROM donetask WHERE 'id' = '3'; -->
     <form id="form1" runat="server">
-        <asp:SqlDataSource runat="server" ID="sdsMyDataSource" ConnectionString="Server=promehub.com;Initial Catalog=atlas;User ID=IIO14S1;Password=vitosenprojekti" ProviderName="MySql.Data.MySqlClient" SelectCommand="SELECT worktime, id FROM donetask WHERE 'id' = '1';" />
         <div>
-            <asp:Chart ID="chartGANTT" runat="server" DataSourceID="sdsMyDataSource" Height="153px">
-                <Series>
-                    <asp:Series Name="Series1" ChartType="Bar" LegendText="gfd" XValueMember="worktime" YValueMembers="id"></asp:Series>
+            <asp:Chart ID="chartGANTT" runat="server">
+                <Titles>
+                    <asp:Title Text="Time spent"/>
+                </Titles>
+                 <Series>
+                    <asp:Series IsValueShownAsLabel="true" ChartType="Bar" Name="Dokumentaatio" Color="Yellow" />
+                    <asp:Series IsValueShownAsLabel="true" ChartType="Bar" Name="Ohjelmointi" Color="LightBlue"/>
                 </Series>
                 <ChartAreas>
-                    <asp:ChartArea Name="ChartArea1"></asp:ChartArea>
+                    <asp:ChartArea Name="ChartArea1">
+                        <AxisY Enabled="False"/>
+                        <AxisX Enabled="False"/>
+                    </asp:ChartArea>
                 </ChartAreas>
             </asp:Chart>
+            <asp:GridView runat="server" ID="gvData"></asp:GridView>
         </div>
         <div style="margin-bottom:0;">
             <asp:Label ID="lblFooter" runat="server" />
