@@ -1,14 +1,13 @@
 /*users*/
 INSERT INTO user (
 
-	username, password, firstname, 
+	username, password, salt, firstname, 
 	lastname, created, modified, role
 )
 VALUES 
 (
 
-	'Esimerkki',
-'tepi', 
+'Esimerkki','tepi', 'sfhelfi45&' ,
 'Erkki', 'Esimerkki', '2016-04-07 14:17:53', 
 '2016-04-07 14:17:53', 'user'
 );
