@@ -22,7 +22,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="txtGithubRepo">Github repository</label>
                     <div class="col-sm-5">
-                        <asp:textbox class="form-control" id="Textbox1" placeholder="Enter Github repository name" runat="server"></asp:textbox>
+                        <asp:textbox class="form-control" id="txtGithubRepo" placeholder="Enter Github repository name" runat="server"></asp:textbox>
                     </div>
                 </div>
                 <div class="form-group">
