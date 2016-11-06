@@ -10,8 +10,10 @@ using System.Web;
 /// 
 namespace Atlas
 {
-    public static class Database
+
+    public class Database
     {
+
         public static DataTable GetGanttData(int projectId)
         {
             try
@@ -38,6 +40,24 @@ namespace Atlas
                 throw ex;
             }
         }
-    }
 
+        public static int EFTEST(int projectID)
+        {
+            atlasEntities ctx = new atlasEntities();
+            var worktime = from a in ctx.donetasks
+                join taskname in ctx.tasks on a.task_id equals taskname.id 
+                    where (from c in ctx.tasks where c.project_id == projectID select c.id).Contains(a.task_id)
+                        select a.worktime;
+
+
+           // var majorTasks = (from c in ctx.tasks where c.project_id == projectID && c.task_id == null select new { c.id, c.name }).ToList();
+            
+            
+
+
+         //   int time = worktime.Count();
+            //System.Diagnostics.Debug.WriteLine("Count: " +worktime.Count());
+            return worktime.Sum();
+        } 
+    }
 }
