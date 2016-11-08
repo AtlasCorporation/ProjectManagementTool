@@ -1,0 +1,91 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/sidebar.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#lbProjects option").hover(
+            function() {
+            this.style.backgroundColor = '#CCCCCC';
+            },
+            function() {
+            this.style.backgroundColor = 'white';
+            });
+        });
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    <!-- Menu -->
+    <div class="side-menu">
+    
+    <nav class="navbar navbar-default" role="navigation">
+    <!-- Project and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <div class="brand-wrapper">
+            <!-- Hamburger -->
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Project -->
+            <div class="brand-name-wrapper">
+                <a data-toggle="collapse" href="#dropdown-lvl1" class="navbar-brand">
+                    Select project <span class="caret"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div class="side-menu-container">
+        <ul class="nav navbar-nav">
+
+            <!-- Dropdown-->
+            <li class="panel panel-default" id="dropdown">
+                <div id="dropdown-lvl1" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <ul class="nav navbar-nav">
+                            <asp:ListBox runat="server" id="lbProjects" cssclass="form-control" AutoPostBack="true" OnSelectedIndexChanged="lbProjects_SelectedIndexChanged"></asp:ListBox>
+                        </ul>
+                    </div>
+                </div>
+            </li>
+
+            <li class="active"><a href="Home.aspx"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+            <li class="active"><a href="Index.aspx"><span class="glyphicon glyphicon-align-left"></span> Gantt chart</a></li>
+            <li class="active"><a href="Index.aspx"><span class="glyphicon glyphicon-book"></span> Documentation</a></li>
+            <li class="active"><a href="Index.aspx"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        </ul>
+    </div>
+
+    </nav>
+    
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <div class="side-body">
+            <asp:ContentPlaceHolder id="body" runat="server"></asp:ContentPlaceHolder>
+        </div>
+    </div>
+
+    </div>
+    </form>
+</body>
+</html>

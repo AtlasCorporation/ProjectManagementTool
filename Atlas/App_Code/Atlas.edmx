@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="atlasModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="donetask">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="task_id" Type="int" Nullable="false" />
+          <Property Name="whodid" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="worktime" Type="int" Nullable="false" />
+          <Property Name="date" Type="datetime" Precision="0" />
+        </EntityType>
+        <EntityType Name="project">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="customer" Type="varchar" MaxLength="255" />
+          <Property Name="description" Type="varchar" MaxLength="255" />
+          <Property Name="github_username" Type="varchar" MaxLength="50" />
+          <Property Name="github_reponame" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="task">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="task_id" Type="int" />
+          <Property Name="project_id" Type="int" />
+          <Property Name="name" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="user">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="username" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="password" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="salt" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="firstname" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="lastname" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="created" Type="datetime" Precision="0" />
+          <Property Name="modified" Type="datetime" Precision="0" />
+          <Property Name="role" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="user_project">
+          <Key>
+            <PropertyRef Name="user_id" />
+            <PropertyRef Name="project_id" />
+          </Key>
+          <Property Name="user_id" Type="int" Nullable="false" />
+          <Property Name="project_id" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="donetask_ibfk_1">
+          <End Role="task" Type="Self.task" Multiplicity="1" />
+          <End Role="donetask" Type="Self.donetask" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="task">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="donetask">
+              <PropertyRef Name="task_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="task_ibfk_1">
+          <End Role="task" Type="Self.task" Multiplicity="0..1" />
+          <End Role="task1" Type="Self.task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="task">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="task1">
+              <PropertyRef Name="task_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="task_ibfk_2">
+          <End Role="project" Type="Self.project" Multiplicity="0..1" />
+          <End Role="task" Type="Self.task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="project">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="task">
+              <PropertyRef Name="project_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="user_project_ibfk_1">
+          <End Role="project" Type="Self.project" Multiplicity="1" />
+          <End Role="user_project" Type="Self.user_project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="project">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="user_project">
+              <PropertyRef Name="project_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="user_project_ibfk_2">
+          <End Role="user" Type="Self.user" Multiplicity="1" />
+          <End Role="user_project" Type="Self.user_project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="user">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="user_project">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="atlasModelStoreContainer">
+          <EntitySet Name="donetask" EntityType="Self.donetask" Schema="atlas" store:Type="Tables" />
+          <EntitySet Name="project" EntityType="Self.project" Schema="atlas" store:Type="Tables" />
+          <EntitySet Name="task" EntityType="Self.task" Schema="atlas" store:Type="Tables" />
+          <EntitySet Name="user" EntityType="Self.user" Schema="atlas" store:Type="Tables" />
+          <EntitySet Name="user_project" EntityType="Self.user_project" Schema="atlas" store:Type="Tables" />
+          <AssociationSet Name="donetask_ibfk_1" Association="Self.donetask_ibfk_1">
+            <End Role="task" EntitySet="task" />
+            <End Role="donetask" EntitySet="donetask" />
+          </AssociationSet>
+          <AssociationSet Name="task_ibfk_1" Association="Self.task_ibfk_1">
+            <End Role="task" EntitySet="task" />
+            <End Role="task1" EntitySet="task" />
+          </AssociationSet>
+          <AssociationSet Name="task_ibfk_2" Association="Self.task_ibfk_2">
+            <End Role="project" EntitySet="project" />
+            <End Role="task" EntitySet="task" />
+          </AssociationSet>
+          <AssociationSet Name="user_project_ibfk_1" Association="Self.user_project_ibfk_1">
+            <End Role="project" EntitySet="project" />
+            <End Role="user_project" EntitySet="user_project" />
+          </AssociationSet>
+          <AssociationSet Name="user_project_ibfk_2" Association="Self.user_project_ibfk_2">
+            <End Role="user" EntitySet="user" />
+            <End Role="user_project" EntitySet="user_project" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="atlasModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="donetask">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="task_id" Type="Int32" Nullable="false" />
+          <Property Name="whodid" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="worktime" Type="Int32" Nullable="false" />
+          <Property Name="date" Type="DateTime" />
+          <NavigationProperty Name="task" Relationship="Self.donetask_ibfk_1" FromRole="donetask" ToRole="task" />
+        </EntityType>
+        <EntityType Name="project">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="customer" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="github_username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="github_reponame" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="tasks" Relationship="Self.task_ibfk_2" FromRole="project" ToRole="task" />
+          <NavigationProperty Name="users" Relationship="Self.user_project" FromRole="project" ToRole="user" />
+        </EntityType>
+        <EntityType Name="task">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="task_id" Type="Int32" />
+          <Property Name="project_id" Type="Int32" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="donetasks" Relationship="Self.donetask_ibfk_1" FromRole="task" ToRole="donetask" />
+          <NavigationProperty Name="project" Relationship="Self.task_ibfk_2" FromRole="task" ToRole="project" />
+          <NavigationProperty Name="task1" Relationship="Self.task_ibfk_1" FromRole="task" ToRole="task1" />
+          <NavigationProperty Name="task2" Relationship="Self.task_ibfk_1" FromRole="task1" ToRole="task" />
+        </EntityType>
+        <EntityType Name="user">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="salt" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="firstname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="lastname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="created" Type="DateTime" />
+          <Property Name="modified" Type="DateTime" />
+          <Property Name="role" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="projects" Relationship="Self.user_project" FromRole="user" ToRole="project" />
+        </EntityType>
+        <Association Name="donetask_ibfk_1">
+          <End Role="task" Type="Self.task" Multiplicity="1" />
+          <End Role="donetask" Type="Self.donetask" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="task">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="donetask">
+              <PropertyRef Name="task_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="task_ibfk_2">
+          <End Role="project" Type="Self.project" Multiplicity="0..1" />
+          <End Role="task" Type="Self.task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="project">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="task">
+              <PropertyRef Name="project_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="task_ibfk_1">
+          <End Role="task" Type="Self.task" Multiplicity="0..1" />
+          <End Role="task1" Type="Self.task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="task">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="task1">
+              <PropertyRef Name="task_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="user_project">
+          <End Role="project" Type="Self.project" Multiplicity="*" />
+          <End Role="user" Type="Self.user" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="atlasEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="donetasks" EntityType="Self.donetask" />
+          <EntitySet Name="projects" EntityType="Self.project" />
+          <EntitySet Name="tasks" EntityType="Self.task" />
+          <EntitySet Name="users" EntityType="Self.user" />
+          <AssociationSet Name="donetask_ibfk_1" Association="Self.donetask_ibfk_1">
+            <End Role="task" EntitySet="tasks" />
+            <End Role="donetask" EntitySet="donetasks" />
+          </AssociationSet>
+          <AssociationSet Name="task_ibfk_2" Association="Self.task_ibfk_2">
+            <End Role="project" EntitySet="projects" />
+            <End Role="task" EntitySet="tasks" />
+          </AssociationSet>
+          <AssociationSet Name="task_ibfk_1" Association="Self.task_ibfk_1">
+            <End Role="task" EntitySet="tasks" />
+            <End Role="task1" EntitySet="tasks" />
+          </AssociationSet>
+          <AssociationSet Name="user_project" Association="Self.user_project">
+            <End Role="project" EntitySet="projects" />
+            <End Role="user" EntitySet="users" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="atlasModelStoreContainer" CdmEntityContainer="atlasEntities">
+          <EntitySetMapping Name="donetasks">
+            <EntityTypeMapping TypeName="atlasModel.donetask">
+              <MappingFragment StoreEntitySet="donetask">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="task_id" ColumnName="task_id" />
+                <ScalarProperty Name="whodid" ColumnName="whodid" />
+                <ScalarProperty Name="worktime" ColumnName="worktime" />
+                <ScalarProperty Name="date" ColumnName="date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="projects">
+            <EntityTypeMapping TypeName="atlasModel.project">
+              <MappingFragment StoreEntitySet="project">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="customer" ColumnName="customer" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="github_username" ColumnName="github_username" />
+                <ScalarProperty Name="github_reponame" ColumnName="github_reponame" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tasks">
+            <EntityTypeMapping TypeName="atlasModel.task">
+              <MappingFragment StoreEntitySet="task">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="task_id" ColumnName="task_id" />
+                <ScalarProperty Name="project_id" ColumnName="project_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="users">
+            <EntityTypeMapping TypeName="atlasModel.user">
+              <MappingFragment StoreEntitySet="user">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="salt" ColumnName="salt" />
+                <ScalarProperty Name="firstname" ColumnName="firstname" />
+                <ScalarProperty Name="lastname" ColumnName="lastname" />
+                <ScalarProperty Name="created" ColumnName="created" />
+                <ScalarProperty Name="modified" ColumnName="modified" />
+                <ScalarProperty Name="role" ColumnName="role" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="user_project" TypeName="atlasModel.user_project" StoreEntitySet="user_project">
+            <EndProperty Name="project">
+              <ScalarProperty Name="id" ColumnName="project_id" />
+            </EndProperty>
+            <EndProperty Name="user">
+              <ScalarProperty Name="id" ColumnName="user_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
