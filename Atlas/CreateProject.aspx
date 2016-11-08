@@ -4,13 +4,24 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
     <div class="panel panel-default">
-        <div class="panel-heading"><b>Create new project</b></div>
+        <div class="panel-heading"><strong>Create new project</strong></div>
         <div class="panel-body">
             <div class="form-horizontal">
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="txtProjectName">Project name</label>
+                    <label class="col-sm-2 control-label" for="txtProjectName"><span style="color:red">*&nbsp;</span>Project name</label>
                     <div class="col-sm-5">
                         <asp:textbox class="form-control" id="txtProjectName" placeholder="Enter project name" runat="server"></asp:textbox>
+                        <asp:RequiredFieldValidator id="RequiredFieldValidator1" runat="server"
+                            ControlToValidate ="txtProjectName"
+                            ErrorMessage ="Project name is a required field."
+                            ForeColor ="Red">
+                        </asp:RequiredFieldValidator>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="txtProjectDesc">Project description</label>
+                    <div class="col-sm-5">
+                        <asp:textbox class="form-control" id="txtProjectDesc" placeholder="Enter short description for the project" runat="server" TextMode="MultiLine" Rows="2" style="resize:none"></asp:textbox>
                     </div>
                 </div>
                 <div class="form-group">
@@ -32,8 +43,9 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-5">
-                        <asp:button cssclass="btn btn-success" id="btnCreateProject" onclick="btnCreateProject_Click" runat="server" text="Create"></asp:button>
-                    </div>
+                        <asp:button cssclass="btn btn-success" id="btnCreateProject" onclick="btnCreateProject_Click" runat="server" text="Create"></asp:button><br /><br />
+                        <span style="color:red">*</span> Indicates required field.
+                    </div>                 
                 </div>
             </div>
         </div>

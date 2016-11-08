@@ -33,6 +33,9 @@ public partial class project
     public int id { get; set; }
     public string name { get; set; }
     public string customer { get; set; }
+    public string description { get; set; }
+    public string github_username { get; set; }
+    public string github_reponame { get; set; }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<task> tasks { get; set; }
@@ -73,6 +76,7 @@ public partial class user
     public int id { get; set; }
     public string username { get; set; }
     public string password { get; set; }
+    public string salt { get; set; }
     public string firstname { get; set; }
     public string lastname { get; set; }
     public Nullable<System.DateTime> created { get; set; }

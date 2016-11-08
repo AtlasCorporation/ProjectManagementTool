@@ -11,10 +11,10 @@ using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 
-public partial class AtlasEntities : DbContext
+public partial class atlasEntities : DbContext
 {
-    public AtlasEntities()
-        : base("name=AtlasEntities")
+    public atlasEntities()
+        : base("name=atlasEntities")
     {
     }
 

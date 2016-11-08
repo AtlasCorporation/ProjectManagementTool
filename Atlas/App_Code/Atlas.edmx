@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="AtlasModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="atlasModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="donetask">
           <Key>
             <PropertyRef Name="id" />
@@ -22,6 +22,9 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="customer" Type="varchar" MaxLength="255" />
+          <Property Name="description" Type="varchar" MaxLength="255" />
+          <Property Name="github_username" Type="varchar" MaxLength="50" />
+          <Property Name="github_reponame" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="task">
           <Key>
@@ -39,6 +42,7 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="username" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="password" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="salt" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="firstname" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="lastname" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="created" Type="datetime" Precision="0" />
@@ -113,7 +117,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="AtlasModelStoreContainer">
+        <EntityContainer Name="atlasModelStoreContainer">
           <EntitySet Name="donetask" EntityType="Self.donetask" Schema="atlas" store:Type="Tables" />
           <EntitySet Name="project" EntityType="Self.project" Schema="atlas" store:Type="Tables" />
           <EntitySet Name="task" EntityType="Self.task" Schema="atlas" store:Type="Tables" />
@@ -144,7 +148,7 @@
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="AtlasModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="atlasModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="donetask">
           <Key>
             <PropertyRef Name="id" />
@@ -163,6 +167,9 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="customer" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="github_username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="github_reponame" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="tasks" Relationship="Self.task_ibfk_2" FromRole="project" ToRole="task" />
           <NavigationProperty Name="users" Relationship="Self.user_project" FromRole="project" ToRole="user" />
         </EntityType>
@@ -186,6 +193,7 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="salt" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="firstname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="lastname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="created" Type="DateTime" />
@@ -233,7 +241,7 @@
           <End Role="project" Type="Self.project" Multiplicity="*" />
           <End Role="user" Type="Self.user" Multiplicity="*" />
         </Association>
-        <EntityContainer Name="AtlasEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="atlasEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="donetasks" EntityType="Self.donetask" />
           <EntitySet Name="projects" EntityType="Self.project" />
           <EntitySet Name="tasks" EntityType="Self.task" />
@@ -260,9 +268,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="AtlasModelStoreContainer" CdmEntityContainer="AtlasEntities">
+        <EntityContainerMapping StorageEntityContainer="atlasModelStoreContainer" CdmEntityContainer="atlasEntities">
           <EntitySetMapping Name="donetasks">
-            <EntityTypeMapping TypeName="AtlasModel.donetask">
+            <EntityTypeMapping TypeName="atlasModel.donetask">
               <MappingFragment StoreEntitySet="donetask">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="task_id" ColumnName="task_id" />
@@ -273,16 +281,19 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="projects">
-            <EntityTypeMapping TypeName="AtlasModel.project">
+            <EntityTypeMapping TypeName="atlasModel.project">
               <MappingFragment StoreEntitySet="project">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="customer" ColumnName="customer" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="github_username" ColumnName="github_username" />
+                <ScalarProperty Name="github_reponame" ColumnName="github_reponame" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tasks">
-            <EntityTypeMapping TypeName="AtlasModel.task">
+            <EntityTypeMapping TypeName="atlasModel.task">
               <MappingFragment StoreEntitySet="task">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="task_id" ColumnName="task_id" />
@@ -292,11 +303,12 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="users">
-            <EntityTypeMapping TypeName="AtlasModel.user">
+            <EntityTypeMapping TypeName="atlasModel.user">
               <MappingFragment StoreEntitySet="user">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="username" ColumnName="username" />
                 <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="salt" ColumnName="salt" />
                 <ScalarProperty Name="firstname" ColumnName="firstname" />
                 <ScalarProperty Name="lastname" ColumnName="lastname" />
                 <ScalarProperty Name="created" ColumnName="created" />
@@ -305,7 +317,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="user_project" TypeName="AtlasModel.user_project" StoreEntitySet="user_project">
+          <AssociationSetMapping Name="user_project" TypeName="atlasModel.user_project" StoreEntitySet="user_project">
             <EndProperty Name="project">
               <ScalarProperty Name="id" ColumnName="project_id" />
             </EndProperty>

@@ -7,25 +7,44 @@ using System.Web.UI.WebControls;
 
 public partial class CreateProject : System.Web.UI.Page
 {
-    protected static AtlasEntities ctx;
-
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
-        { 
-            ctx = new AtlasEntities();
-        }
+
     }
 
     protected void btnCreateProject_Click(object sender, EventArgs e)
     {
-        lblMessages.Text = "";
-        var result = from p in ctx.projects
-                     orderby p.name
-                     select new { p.name };
-        foreach (var p in result)
+        if (!string.IsNullOrWhiteSpace(txtProjectName.Text))
+            CreateNewProject(txtProjectName.Text, txtProjectDesc.Text, txtGithubUser.Text, txtGithubRepo.Text);
+    }
+
+    /// <summary>
+    /// Creates a new project with given properties.
+    /// Adds the new project to the database and sets it as active project.
+    /// </summary>
+    protected void CreateNewProject(string projectName, string projectDesc, string githubUser, string githubRepo)
+    {
+        try
         {
-            lblMessages.Text += p.name + "<br>";
+            using (var db = new atlasEntities())
+            {
+                var projects = db.Set<project>();
+                project p = new project
+                {
+                    name = projectName,
+                    description = projectDesc,
+                    github_username = githubUser,
+                    github_reponame = githubRepo
+                };
+                projects.Add(p);
+                Session["ActiveProject"] = p.name;
+                db.SaveChanges();
+            }         
+            Response.Redirect("Home.aspx", true);
+        }
+        catch (Exception ex)
+        {
+            lblMessages.Text = ex.Message;
         }
     }
 }
