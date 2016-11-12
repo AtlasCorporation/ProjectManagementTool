@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 using MySql.Data;
 using System.Data;
 using System.Text;
-
+using System.Web.UI.DataVisualization.Charting;
 
 public partial class GANTT : System.Web.UI.Page
 {
@@ -15,34 +15,14 @@ public partial class GANTT : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         try
-        {
-            // testihaku projektin id:llä
-            /*  dt = Atlas.Database.GetGanttData(1);
-              chartGANTT.DataSource = dt;
-              chartGANTT.Series["Dokumentaatio"].YValueMembers = "dokumentaatiotunnit";
-              chartGANTT.Series["Ohjelmointi"].YValueMembers = "ohjelmointitunnit";
-              chartGANTT.DataBind();
+        {           
+            Atlas.Database db = new Atlas.Database();
 
-              gvData.DataSource = dt;
-              gvData.DataBind();*/
+            // anna projektin ID getworkinghoursille
+            var data = db.GetWorkingHours(1);
+            BindDataToGantt(data);
 
-            // lblFooter.Text = ""+Atlas.Database.EFTEST(1);
-            atlasEntities ctx = new atlasEntities();
-            var worktime = (from a in ctx.tasks
-                           join fulfilledTask in ctx.donetasks on a.id equals fulfilledTask.task_id
-                           where a.project_id == 1
-                           select new { a.name, fulfilledTask.worktime, a.task_id }).ToList();
-
-            int? x = 0;
-            int hours = 0;
-
-            foreach(var item in worktime)
-            {
-                
-            }
-
-
-            gvData.DataSource = worktime;
+            gvData.DataSource = data;
             gvData.DataBind();
 
         }
@@ -51,6 +31,27 @@ public partial class GANTT : System.Web.UI.Page
             lblFooter.Text = ex.Message;
         }
     }    
+
+    protected void BindDataToGantt(IEnumerable<Task> tasks)
+    {        
+        ChartArea chartArea = new ChartArea("ChartArea");
+        pieChart.ChartAreas.Add(chartArea);
+        pieChart.ChartAreas["ChartArea"].Area3DStyle.Enable3D = true;
+        pieChart.Series.Clear();
+        //pieChart.Palette = ChartColorPalette.EarthTones;
+        pieChart.Titles.Add("Hours spent on project");
+        pieChart.Series.Add("WorkHours");
+        pieChart.Series["WorkHours"].ChartType = SeriesChartType.Pie;
+        DataPoint point;
+
+        foreach (Task item in tasks)
+        {
+            point = new DataPoint(0,item.Hours);
+            point.AxisLabel = item.Name;
+            //point.LegendText = item.Name;
+            pieChart.Series["WorkHours"].Points.Add(point);                     
+        }        
+    }
 
     
 }

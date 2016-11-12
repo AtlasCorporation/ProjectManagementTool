@@ -12,21 +12,7 @@
     <!-- SELECT SUM(worktime) AS Ohjelmointi FROM donetask WHERE 'id' = '3'; -->
     <form id="form1" runat="server">
         <div>
-            <asp:Chart ID="chartGANTT" runat="server">
-                <Titles>
-                    <asp:Title Text="Time spent"/>
-                </Titles>
-                 <Series>
-                    <asp:Series IsValueShownAsLabel="true" ChartType="Bar" Name="Dokumentaatio" Color="Yellow" />
-                    <asp:Series IsValueShownAsLabel="true" ChartType="Bar" Name="Ohjelmointi" Color="LightBlue"/>
-                </Series>
-                <ChartAreas>
-                    <asp:ChartArea Name="ChartArea1">
-                        <AxisY Enabled="False"/>
-                        <AxisX Enabled="False"/>
-                    </asp:ChartArea>
-                </ChartAreas>
-            </asp:Chart>
+            <asp:Chart ID="pieChart" runat="server" />   
             <asp:GridView runat="server" ID="gvData"></asp:GridView>
         </div>
         <div style="margin-bottom:0;">

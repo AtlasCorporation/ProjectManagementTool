@@ -12,7 +12,10 @@ namespace Atlas
 {
 
     public class Database
-    {
+    {      
+        atlasEntities ctx = new atlasEntities();
+
+        #region TESTFUNCTIONS
 
         public static DataTable GetGanttData(int projectId)
         {
@@ -41,23 +44,78 @@ namespace Atlas
             }
         }
 
-        public static int EFTEST(int projectID)
+        #endregion
+        #region MEHTODS
+        public IEnumerable<task> GetChildren(int inputID)
         {
-            atlasEntities ctx = new atlasEntities();
-            var worktime = from a in ctx.donetasks
-                join taskname in ctx.tasks on a.task_id equals taskname.id 
-                    where (from c in ctx.tasks where c.project_id == projectID select c.id).Contains(a.task_id)
-                        select a.worktime;
-
-
-           // var majorTasks = (from c in ctx.tasks where c.project_id == projectID && c.task_id == null select new { c.id, c.name }).ToList();
+            // haetaan vanhempi
+            var query = ctx.tasks.Where(x => x.id == inputID).ToList();
+            // haetaan loput
+            for(int i = 0;i<query.Count();i++)
+            {
+                int currentID = query.ElementAt(i).id;
+                var children = ctx.tasks.Where(x => x.task_id == currentID).ToList();
+                query = query.Union(children).ToList();
+            }
             
-            
+            return query;
+        }
+
+        public IEnumerable<int> GetChildrenIds(int inputID)
+        {
+            // haetaan vanhempi
+            var query = ctx.tasks.Where(x => x.id == inputID).Select(z => z.id).ToList();
+
+            // haetaan loput
+            for (int i = 0; i < query.Count(); i++)
+            {
+                int currentID = query.ElementAt(i);
+                var children = ctx.tasks.Where(x => x.task_id == currentID).Select(z => z.id).ToList();
+                query = query.Union(children).ToList();
+            }
+
+            return query;
+        }
 
 
-         //   int time = worktime.Count();
-            //System.Diagnostics.Debug.WriteLine("Count: " +worktime.Count());
-            return worktime.Sum();
-        } 
+        public List<Task> GetWorkingHours(int projectID)
+        {
+            List<Task> TopTasks = new List<Task>();
+            Task tempTask;
+            IEnumerable<int> tasks;
+
+            // haetaan ensimmäisen polven taskit, joilla task_id == null
+            var majorTasksQuery = from c in ctx.tasks
+                             where c.project_id == projectID && c.task_id == null
+                             select c;
+
+            // iteroidaan löydettyjen taskien läpi
+            foreach(var item in majorTasksQuery)
+            {
+                // luo tilapäisolio taskin tiedoilla
+                tempTask = new Task(item.id, item.name);
+                // hae taskin kaikki lapset listaan
+                tasks = GetChildrenIds(item.id);
+                // hae työtunnit jokaisesta listan taskista tilapäisolion tietoihin
+                tempTask.Hours = GetHours(tasks);
+                // tallennetaan tilapäisolio pysyvään listaan
+                TopTasks.Add(tempTask);
+            }
+
+            // palauta lista
+            return TopTasks;
+        }
+
+        protected int GetHours(IEnumerable<int> tasks)
+        {
+            var query = (from dtask in ctx.donetasks
+                         join t in tasks on dtask.task_id equals t
+                         where dtask.task_id == t
+                         select dtask.worktime).Sum();
+
+            return query;
+        }
+
+        #endregion
     }
 }
