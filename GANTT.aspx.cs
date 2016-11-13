@@ -46,8 +46,8 @@ public partial class GANTT : System.Web.UI.Page
 
         foreach (Task item in tasks)
         {
-            point = new DataPoint(0,item.Hours);
-            point.AxisLabel = item.Name;
+            point = new DataPoint(0,item.duration);
+            point.AxisLabel = item.text;
             //point.LegendText = item.Name;
             pieChart.Series["WorkHours"].Points.Add(point);                     
         }        

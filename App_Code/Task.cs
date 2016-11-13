@@ -8,34 +8,53 @@ using System.Web;
 /// </summary>
 public class Task
 {
-    private int id;
+    private int ID;
 
-    public int ID
+    public int id
     {
-        get { return id; }
-        set { id = value; }
+        get { return ID; }
+        set { ID = value; }
     }
 
-    private string name;
+    private string Text;
 
-    public string Name
+    public string text
     {
-        get { return name; }
-        set { name = value; }
+        get { return Text; }
+        set { Text = value; }
     }
 
-    private int hours;
+    private string Start_date;
 
-    public int Hours
+    public string start_date
     {
-        get { return hours; }
-        set { hours = value; }
+        get { return Start_date; }
+        set { Start_date = value; }
     }
+
+    private int Duration;
+
+    public int duration
+    {
+        get { return Duration; }
+        set { Duration = value; }
+    }
+
+    public int? parent { get; set; }
 
 
     public Task(int id, string name)
     {
         this.id = id;
-        this.name = name;
+        this.text = name;
+    }
+
+    public Task(int id, string name, string StartingDateTime, int WorkTime, int? Parent)
+    {
+        this.id = id;
+        this.text = name;
+        this.start_date = StartingDateTime;
+        this.duration = WorkTime;
+        this.parent = Parent;
     }
 }

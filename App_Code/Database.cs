@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
 
 /// <summary>
 /// Summary description for Database
@@ -10,7 +11,6 @@ using System.Web;
 /// 
 namespace Atlas
 {
-
     public class Database
     {      
         atlasEntities ctx = new atlasEntities();
@@ -45,12 +45,13 @@ namespace Atlas
         }
 
         #endregion
-        #region MEHTODS
+        #region METHODS
         public IEnumerable<task> GetChildren(int inputID)
         {
             // haetaan vanhempi
             var query = ctx.tasks.Where(x => x.id == inputID).ToList();
-            // haetaan loput
+            // loopissa haetaan queryn seuraava rivi ja etsitään kaikki sen lapset, jotka lisätään unionilla queryn loppuun. 
+            // queryn koko kasvaa loopin aikana kunnes kaikki lapset on haettu. 
             for(int i = 0;i<query.Count();i++)
             {
                 int currentID = query.ElementAt(i).id;
@@ -66,7 +67,8 @@ namespace Atlas
             // haetaan vanhempi
             var query = ctx.tasks.Where(x => x.id == inputID).Select(z => z.id).ToList();
 
-            // haetaan loput
+            // loopissa haetaan queryn seuraava rivi ja etsitään kaikki sen lapset, jotka lisätään unionilla queryn loppuun. 
+            // queryn koko kasvaa loopin aikana kunnes kaikki lapset on haettu. 
             for (int i = 0; i < query.Count(); i++)
             {
                 int currentID = query.ElementAt(i);
@@ -76,7 +78,6 @@ namespace Atlas
 
             return query;
         }
-
 
         public List<Task> GetWorkingHours(int projectID)
         {
@@ -97,7 +98,7 @@ namespace Atlas
                 // hae taskin kaikki lapset listaan
                 tasks = GetChildrenIds(item.id);
                 // hae työtunnit jokaisesta listan taskista tilapäisolion tietoihin
-                tempTask.Hours = GetHours(tasks);
+                tempTask.duration = GetHours(tasks);
                 // tallennetaan tilapäisolio pysyvään listaan
                 TopTasks.Add(tempTask);
             }
@@ -106,6 +107,7 @@ namespace Atlas
             return TopTasks;
         }
 
+        // hakee taskien id-listan perusteella yhteistuntimäärän taskeista
         protected int GetHours(IEnumerable<int> tasks)
         {
             var query = (from dtask in ctx.donetasks
@@ -114,6 +116,51 @@ namespace Atlas
                          select dtask.worktime).Sum();
 
             return query;
+        }
+
+
+        public List<Task> GetTasks(int projectID)
+        {
+            // hae kaikki projektiin liittyvien donetaskien ja taskien olennainen data
+            var donetasks =  (from dtask in ctx.donetasks
+                                join t in (from c in ctx.tasks where c.project_id == projectID select c) on dtask.task_id equals t.id
+                                where dtask.task_id == t.id
+                                select new { ID = t.id, Date = dtask.date, Worker = dtask.whodid, WorkTime = dtask.worktime, Name = t.name, Parent = t.task_id});
+
+            Task tempTask;
+
+            List<Task> Tasks = new List<Task>();
+
+            // luo datasta uusia Task-olioita. 
+            // Huom, Task != task
+            // Task on oma luokkansa joka sisältää molempien taulujen dataa 
+            foreach(var dtask in donetasks)
+            {
+                tempTask = new Task(dtask.ID, dtask.Name, dtask.Date.Value.Day + "-" + dtask.Date.Value.Month + "-" + dtask.Date.Value.Year, dtask.WorkTime, dtask.Parent);
+                Tasks.Add(tempTask);
+            }
+
+            return Tasks;
+        }
+
+        public string GetTasksInJson(int projectID)
+        {
+            string tasksJson = "{data:[";
+            List<Task> tasks = GetTasks(projectID);
+            for (int i = 0;i<tasks.Count;i++)
+            {
+                tasksJson += JsonConvert.SerializeObject(tasks.ElementAt(i));
+                if (i != tasks.Count-1)
+                {
+                    tasksJson += ",";
+                }
+                else
+                {
+                    tasksJson += "]}";
+                }
+            }
+
+            return tasksJson;
         }
 
         #endregion
