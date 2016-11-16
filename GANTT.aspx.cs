@@ -14,22 +14,16 @@ public partial class GANTT : System.Web.UI.Page
     //DataTable dt;
     protected void Page_Load(object sender, EventArgs e)
     {
-        try
-        {           
+
             Atlas.Database db = new Atlas.Database();
 
             // anna projektin ID getworkinghoursille
-            var data = db.GetWorkingHours(1);
+            var data = db.GetProjectWorkingHours(1);
             BindDataToGantt(data);
 
             gvData.DataSource = data;
             gvData.DataBind();
 
-        }
-        catch (Exception ex)
-        {
-            lblFooter.Text = ex.Message;
-        }
     }    
 
     protected void BindDataToGantt(IEnumerable<Task> tasks)

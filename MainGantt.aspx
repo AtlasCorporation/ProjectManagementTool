@@ -9,16 +9,20 @@
     <title>GANTT test</title>
 </head>
 <body>
-    <form id="form1" runat="server" style='width:100%; height:600px;'>
-    <div id="ganttDiv" style='width:100%; height:100%;'>
-        <script type="text/javascript">    
-            gantt.init("ganttDiv");
-            gantt.parse(<%= GetJsonData() %>);
-        </script>
-        <p>
-            <asp:Label runat="server" ID="lblFooter" />
-        </p>        
-    </div>
+    <form id="form1" runat="server">
+        <div id="ganttDiv"  style='width:100%; min-height:400px;'>
+            <script type="text/javascript">    
+               // gantt.config.subscales = [{ unit: "hour", step: 12, date: "%H:%i" }];
+                gantt.config.duration_unit = "hour";
+                gantt.config.duration_step = 1;
+
+                gantt.init("ganttDiv");
+                gantt.parse(<%= GetJsonData() %>);
+            </script>
+            <p>
+                <asp:Label runat="server" ID="lblFooter" />
+            </p>        
+        </div>
     </form>
 </body>
 </html>

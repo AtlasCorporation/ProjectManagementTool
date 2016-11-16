@@ -79,11 +79,12 @@ namespace Atlas
             return query;
         }
 
-        public List<Task> GetWorkingHours(int projectID)
+        public List<Task> GetProjectWorkingHours(int projectID)
         {
             List<Task> TopTasks = new List<Task>();
             Task tempTask;
             IEnumerable<int> tasks;
+            int tempHours;
 
             // haetaan ensimmäisen polven taskit, joilla task_id == null
             var majorTasksQuery = from c in ctx.tasks
@@ -98,9 +99,14 @@ namespace Atlas
                 // hae taskin kaikki lapset listaan
                 tasks = GetChildrenIds(item.id);
                 // hae työtunnit jokaisesta listan taskista tilapäisolion tietoihin
-                tempTask.duration = GetHours(tasks);
+                tempHours = GetWorkingHours(tasks);
+                // varmistetaan että työtunteja on olemassa
+                if(tempHours > 0)
+                {
+                    tempTask.duration = tempHours;
                 // tallennetaan tilapäisolio pysyvään listaan
-                TopTasks.Add(tempTask);
+                    TopTasks.Add(tempTask);
+                }                
             }
 
             // palauta lista
@@ -108,14 +114,29 @@ namespace Atlas
         }
 
         // hakee taskien id-listan perusteella yhteistuntimäärän taskeista
-        protected int GetHours(IEnumerable<int> tasks)
+        protected int GetWorkingHours(IEnumerable<int> tasks)
         {
-            var query = (from dtask in ctx.donetasks
-                         join t in tasks on dtask.task_id equals t
-                         where dtask.task_id == t
-                         select dtask.worktime).Sum();
+            try
+            {
+                var query = (from dtask in ctx.donetasks
+                             join t in tasks on dtask.task_id equals t
+                             where dtask.task_id == t
+                             select dtask.worktime);
 
-            return query;
+                if(query.Count() > 0)
+                {
+                    return query.Sum();
+                }
+                else
+                {
+                    return 0;
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                throw ex;                
+            }
         }
 
 
@@ -125,7 +146,7 @@ namespace Atlas
             var donetasks =  (from dtask in ctx.donetasks
                                 join t in (from c in ctx.tasks where c.project_id == projectID select c) on dtask.task_id equals t.id
                                 where dtask.task_id == t.id
-                                select new { ID = t.id, Date = dtask.date, Worker = dtask.whodid, WorkTime = dtask.worktime, Name = t.name, Parent = t.task_id});
+                                select new { TaskID = t.id, dTaskID = dtask.id, Date = dtask.date, Worker = dtask.whodid, WorkTime = dtask.worktime, Name = t.name, Parent = t.task_id});
 
             Task tempTask;
 
@@ -136,7 +157,7 @@ namespace Atlas
             // Task on oma luokkansa joka sisältää molempien taulujen dataa 
             foreach(var dtask in donetasks)
             {
-                tempTask = new Task(dtask.ID, dtask.Name, dtask.Date.Value.Day + "-" + dtask.Date.Value.Month + "-" + dtask.Date.Value.Year, dtask.WorkTime, dtask.Parent);
+                tempTask = new Task(dtask.TaskID, dtask.Name + " - " + dtask.Worker, dtask.Date.Value.Day + "-" + dtask.Date.Value.Month + "-" + dtask.Date.Value.Year, dtask.WorkTime, dtask.Parent);
                 Tasks.Add(tempTask);
             }
 
