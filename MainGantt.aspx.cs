@@ -15,8 +15,8 @@ public partial class MainGantt : System.Web.UI.Page
 
     public static string GetJsonData()
     {
-        Atlas.Database db = new Atlas.Database();
-        return db.GetTasksInJson(1);
+        Atlas.SiteLogic sl = new Atlas.SiteLogic();
+        return sl.GetTasksInJson(1);
     }
 
 

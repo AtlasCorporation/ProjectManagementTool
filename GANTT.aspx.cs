@@ -14,7 +14,6 @@ public partial class GANTT : System.Web.UI.Page
     //DataTable dt;
     protected void Page_Load(object sender, EventArgs e)
     {
-
             Atlas.Database db = new Atlas.Database();
 
             // anna projektin ID getworkinghoursille
@@ -23,7 +22,6 @@ public partial class GANTT : System.Web.UI.Page
 
             gvData.DataSource = data;
             gvData.DataBind();
-
     }    
 
     protected void BindDataToGantt(IEnumerable<Task> tasks)
@@ -40,8 +38,8 @@ public partial class GANTT : System.Web.UI.Page
 
         foreach (Task item in tasks)
         {
-            point = new DataPoint(0,item.duration);
-            point.AxisLabel = item.text;
+            point = new DataPoint(0,item.Duration);
+            point.AxisLabel = item.Text;
             //point.LegendText = item.Name;
             pieChart.Series["WorkHours"].Points.Add(point);                     
         }        

@@ -8,40 +8,55 @@ using System.Web;
 /// </summary>
 public class Task
 {
-    private int ID;
+    private int id;
 
-    public int id
+    public int ID
     {
-        get { return ID; }
-        set { ID = value; }
+        get { return id; }
+        set { id = value; }
     }
 
-    private string Text;
+    private string text;
 
-    public string text
+    public string Text
     {
-        get { return Text; }
-        set { Text = value; }
+        get { return text; }
+        set { text = value; }
     }
 
-    private string Start_date;
+    private string startDate;
 
-    public string start_date
+    public string StartDate
     {
-        get { return Start_date; }
-        set { Start_date = value; }
+        get { return startDate; }
+        set { startDate = value; }
     }
 
-    private int Duration;
+    private int duration;
 
-    public int duration
+    public int Duration
     {
-        get { return Duration; }
-        set { Duration = value; }
+        get { return duration; }
+        set { duration = value; }
     }
 
-    public int? parent { get; set; }
+    public int? Parent { get; set; }
 
+    private int ganttId;
+
+    public int GanttId
+    {
+        get { return ganttId; }
+        set { ganttId = value; }
+    }
+
+    private int ganttParentId;
+
+    public int GanttParentId
+    {
+        get { return ganttParentId; }
+        set { ganttParentId = value; }
+    }
 
     public Task(int id, string name)
     {
@@ -49,12 +64,13 @@ public class Task
         this.text = name;
     }
 
-    public Task(int id, string name, string StartingDateTime, int WorkTime, int? Parent)
+    public Task(int id, string name, string StartingDateTime, int WorkTime, int? parent, int ganttId)
     {
         this.id = id;
         this.text = name;
-        this.start_date = StartingDateTime;
+        this.startDate = StartingDateTime;
         this.duration = WorkTime;
-        this.parent = Parent;
+        this.Parent = parent;
+        this.ganttId = ganttId;
     }
 }

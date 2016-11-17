@@ -12,8 +12,13 @@ using Newtonsoft.Json;
 namespace Atlas
 {
     public class Database
-    {      
-        atlasEntities ctx = new atlasEntities();
+    {
+        atlasEntities ctx;
+
+        public Database()
+        {
+            ctx = new atlasEntities();
+        }
 
         #region TESTFUNCTIONS
 
@@ -36,7 +41,7 @@ namespace Atlas
                         }
                     }
                 }
-            
+
             }
             catch (Exception ex)
             {
@@ -52,13 +57,13 @@ namespace Atlas
             var query = ctx.tasks.Where(x => x.id == inputID).ToList();
             // loopissa haetaan queryn seuraava rivi ja etsitään kaikki sen lapset, jotka lisätään unionilla queryn loppuun. 
             // queryn koko kasvaa loopin aikana kunnes kaikki lapset on haettu. 
-            for(int i = 0;i<query.Count();i++)
+            for (int i = 0; i < query.Count(); i++)
             {
                 int currentID = query.ElementAt(i).id;
                 var children = ctx.tasks.Where(x => x.task_id == currentID).ToList();
                 query = query.Union(children).ToList();
             }
-            
+
             return query;
         }
 
@@ -88,11 +93,11 @@ namespace Atlas
 
             // haetaan ensimmäisen polven taskit, joilla task_id == null
             var majorTasksQuery = from c in ctx.tasks
-                             where c.project_id == projectID && c.task_id == null
-                             select c;
+                                  where c.project_id == projectID && c.task_id == null
+                                  select c;
 
             // iteroidaan löydettyjen taskien läpi
-            foreach(var item in majorTasksQuery)
+            foreach (var item in majorTasksQuery)
             {
                 // luo tilapäisolio taskin tiedoilla
                 tempTask = new Task(item.id, item.name);
@@ -101,12 +106,12 @@ namespace Atlas
                 // hae työtunnit jokaisesta listan taskista tilapäisolion tietoihin
                 tempHours = GetWorkingHours(tasks);
                 // varmistetaan että työtunteja on olemassa
-                if(tempHours > 0)
+                if (tempHours > 0)
                 {
-                    tempTask.duration = tempHours;
-                // tallennetaan tilapäisolio pysyvään listaan
+                    tempTask.Duration = tempHours;
+                    // tallennetaan tilapäisolio pysyvään listaan
                     TopTasks.Add(tempTask);
-                }                
+                }
             }
 
             // palauta lista
@@ -123,7 +128,7 @@ namespace Atlas
                              where dtask.task_id == t
                              select dtask.worktime);
 
-                if(query.Count() > 0)
+                if (query.Count() > 0)
                 {
                     return query.Sum();
                 }
@@ -131,11 +136,10 @@ namespace Atlas
                 {
                     return 0;
                 }
-                
             }
             catch (Exception ex)
             {
-                throw ex;                
+                throw ex;
             }
         }
 
@@ -143,10 +147,10 @@ namespace Atlas
         public List<Task> GetTasks(int projectID)
         {
             // hae kaikki projektiin liittyvien donetaskien ja taskien olennainen data
-            var donetasks =  (from dtask in ctx.donetasks
-                                join t in (from c in ctx.tasks where c.project_id == projectID select c) on dtask.task_id equals t.id
-                                where dtask.task_id == t.id
-                                select new { TaskID = t.id, dTaskID = dtask.id, Date = dtask.date, Worker = dtask.whodid, WorkTime = dtask.worktime, Name = t.name, Parent = t.task_id});
+            var donetasks = (from dtask in ctx.donetasks
+                             join t in (from c in ctx.tasks where c.project_id == projectID select c) on dtask.task_id equals t.id
+                             where dtask.task_id == t.id
+                             select new { TaskID = t.id, dTaskID = dtask.id, Date = dtask.date, Worker = dtask.whodid, WorkTime = dtask.worktime, Name = t.name, Parent = t.task_id });
 
             Task tempTask;
 
@@ -155,35 +159,26 @@ namespace Atlas
             // luo datasta uusia Task-olioita. 
             // Huom, Task != task
             // Task on oma luokkansa joka sisältää molempien taulujen dataa 
-            foreach(var dtask in donetasks)
+            int i = 1;
+            foreach (var dtask in donetasks)
             {
-                tempTask = new Task(dtask.TaskID, dtask.Name + " - " + dtask.Worker, dtask.Date.Value.Day + "-" + dtask.Date.Value.Month + "-" + dtask.Date.Value.Year, dtask.WorkTime, dtask.Parent);
+                tempTask = new Task(dtask.TaskID, dtask.Name + " - " + dtask.Worker, dtask.Date.Value.Day + "-" + dtask.Date.Value.Month + "-" + dtask.Date.Value.Year, dtask.WorkTime, dtask.Parent, i);
                 Tasks.Add(tempTask);
+                i++;
+            }
+
+            // asetetaan Taskeille parentit ganttia varten
+            foreach (Task t in Tasks)
+            {
+                if (t.Parent != null)
+                {
+                    t.GanttParentId = (from d in Tasks where d.ID == t.Parent select d.GanttId).FirstOrDefault();
+                }
             }
 
             return Tasks;
-        }
-
-        public string GetTasksInJson(int projectID)
-        {
-            string tasksJson = "{data:[";
-            List<Task> tasks = GetTasks(projectID);
-            for (int i = 0;i<tasks.Count;i++)
-            {
-                tasksJson += JsonConvert.SerializeObject(tasks.ElementAt(i));
-                if (i != tasks.Count-1)
-                {
-                    tasksJson += ",";
-                }
-                else
-                {
-                    tasksJson += "]}";
-                }
-            }
-
-            return tasksJson;
-        }
-
-        #endregion
+        }   
     }
+        #endregion
 }
+
