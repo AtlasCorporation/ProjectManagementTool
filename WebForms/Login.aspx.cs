@@ -12,7 +12,6 @@ using System.Web.UI.WebControls;
 
 public partial class Login : System.Web.UI.Page
 {
-    pwMixer mixer = new pwMixer();
     private string salt;
     private string pw;
     private string pwCheck;
@@ -26,15 +25,17 @@ public partial class Login : System.Web.UI.Page
     protected void LogIn_Click(object sender, EventArgs e)
     {
         string ConnString = ConfigurationManager.ConnectionStrings["Mysli"].ConnectionString;
-        string select = "Select password, salt from user where username='" + usernamelogin.Text + "'";
+        string username = usernamelogin.Text;
+        string select = string.Format( "Select password, salt from user where username=@username");
         DataTable dt = new DataTable();
-        string check2 ="";
-        string check = "";
+        string checkSALT ="";
+        string checkPW = "";
+        //Select with parameter
         try
         {
             MySqlConnection conn = new MySqlConnection(ConnString);
             MySqlCommand MyCommand = new MySqlCommand(select, conn);
-
+            MyCommand.Parameters.AddWithValue("@username", username);
             conn.Open();
             MySqlDataAdapter da = new MySqlDataAdapter(MyCommand);
             
@@ -42,21 +43,22 @@ public partial class Login : System.Web.UI.Page
 
             conn.Close();
             da.Dispose();
-            check = Convert.ToString(dt.Rows[0]["password"]);
-            check2 = Convert.ToString(dt.Rows[0]["salt"]);
+            checkPW = Convert.ToString(dt.Rows[0]["password"]);
+            checkSALT = Convert.ToString(dt.Rows[0]["salt"]);
         }
         catch (Exception ex)
         {
             lblMessages.Text = "Problems with credentials";
         }
         
-        pw = usernamelogin.Text + check2 + passwordlogin.Text;
+        //Generates check pattern from userinputs to check if Hash matches one in database
+        pw = usernamelogin.Text + checkSALT + passwordlogin.Text;
         pw_bytes2 = ASCIIEncoding.ASCII.GetBytes(pw);
         SHA512Managed sha512 = new SHA512Managed();
 
         var hashed_byte_array = sha512.ComputeHash(pw_bytes2);
         
-        if(Convert.ToBase64String(hashed_byte_array) == check){
+        if(Convert.ToBase64String(hashed_byte_array) == checkPW){
             Session["LoggedUser"] = usernamelogin.Text;
             lblMessages.Text = "Login success";
             Response.Redirect("Main.aspx");
