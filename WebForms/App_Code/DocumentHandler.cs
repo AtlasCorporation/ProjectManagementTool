@@ -16,15 +16,28 @@ public class DocumentHandler
     }
     public string ReadFile(string path)
     {
-        //reading helpfile in
+        //reading file in
         try
         {
-            string text = File.ReadAllText(path).Replace("\n", "<br />");
+            string text = File.ReadAllText(path).Replace("\n", "<br />").Replace("#", "<h1>").Replace("¤", "</h1>");
             return text;
         }
         catch (Exception)
         {
            return "Tiedosto puuttuu";
+        }
+    }
+    public string EditFile(string path)
+    {
+        //reading file in
+        try
+        {
+            string text = File.ReadAllText(path);
+            return text;
+        }
+        catch (Exception)
+        {
+            return "Tiedosto puuttuu";
         }
     }
     public void SaveFile(string path, TextBox tb)
@@ -40,6 +53,7 @@ public class DocumentHandler
         }
         catch (Exception)
         {
+
         }
     }
 }
