@@ -70,6 +70,7 @@
             <li class="active"><a href="Home.aspx"><span class="glyphicon glyphicon-home"></span> Home</a></li>
             <li class="active"><a href="Index.aspx"><span class="glyphicon glyphicon-align-left"></span> Gantt chart</a></li>
             <li class="active"><a href="Index.aspx"><span class="glyphicon glyphicon-book"></span> Documentation</a></li>
+            <li class="active"><a href="Settings.aspx"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
             <li class="active"><a href="Index.aspx"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         </ul>
     </div>

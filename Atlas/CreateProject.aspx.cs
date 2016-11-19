@@ -4,8 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Octokit;
-using System.Threading.Tasks;
 
 public partial class CreateProject : System.Web.UI.Page
 {
@@ -18,7 +16,7 @@ public partial class CreateProject : System.Web.UI.Page
 
     protected void btnCreateProject_Click(object sender, EventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(txtProjectName.Text))
+        if (!string.IsNullOrEmpty(txtProjectName.Text))
             CreateNewProject(txtProjectName.Text, txtProjectDesc.Text, txtGithubUser.Text, ddlGithubRepo.Text);
         else
             lblMessages.Text = "Please enter name for your project.";
@@ -34,18 +32,44 @@ public partial class CreateProject : System.Web.UI.Page
         {
             using (var db = new atlasEntities())
             {
-                var projects = db.Set<project>();
-                project p = new project
+                project newProject = new project
                 {
                     name = projectName,
                     description = projectDesc,
                     github_username = githubUser,
                     github_reponame = githubRepo
                 };
-                projects.Add(p);
-                Session["ActiveProject"] = p.name;
+                // Check if project with the same name already exists
+                foreach (project p in db.projects)
+                {
+                    if (p.name == newProject.name)
+                    {
+                        lblMessages.Text = "Project named '" + newProject.name + "' already exists!";
+                        return;
+                    }
+                }
+                db.projects.Add(newProject);
+
+                //TODO: Add project to currently logged in user
+
+                // User wants project to be public -> add it to default-user
+                if (!cbPrivateProject.Checked)
+                {
+                    user defaultUser = null;
+                    foreach (var u in db.users)
+                    {
+                        if (u.username == "Default")
+                        {
+                            defaultUser = u;
+                            break;
+                        }
+                    }
+                    if (defaultUser != null)
+                        defaultUser.projects.Add(newProject);
+                }
                 db.SaveChanges();
-            }         
+                Session["ActiveProject"] = newProject.id;
+            }
             Response.Redirect("Home.aspx", true);
         }
         catch (Exception ex)
@@ -57,32 +81,22 @@ public partial class CreateProject : System.Web.UI.Page
     protected void txtGithubUser_TextChanged(object sender, EventArgs e)
     {
         if (!string.IsNullOrEmpty(txtGithubUser.Text))
-            RegisterAsyncTask(new PageAsyncTask(GetReposForUser));
+             UpdateRepoList();
         else
             ddlGithubRepo.Items.Clear();
     }
 
-    /// <summary>
-    /// Gets Github repositories for given user.
-    /// </summary>
-    public async Task GetReposForUser()
+    protected async void UpdateRepoList()
     {
+        ddlGithubRepo.Items.Clear();
+        lblMessages.Text = "";
         try
         {
-            ddlGithubRepo.Items.Clear();
-            lblMessages.Text = "";
-            var client = new GitHubClient(new ProductHeaderValue("atlas"));
-            var repos = await client.Repository.GetAllForUser(txtGithubUser.Text);
+            List<string> repos = await Github.GetReposForUser(txtGithubUser.Text);
             if (repos != null && repos.Count > 0)
             {
-                foreach (var r in repos)
-                {
-                    ddlGithubRepo.Items.Add(new ListItem(r.Name, r.Name));
-                }
-            }
-            else
-            {
-                lblMessages.Text = "Could not find any repositories for user '" + txtGithubUser.Text + "'.";
+                ddlGithubRepo.DataSource = repos;
+                ddlGithubRepo.DataBind();
             }
         }
         catch (Exception)

@@ -1,14 +1,14 @@
-﻿<%@ Page Title="Atlas - Create Project" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="CreateProject.aspx.cs" Inherits="CreateProject" Async="true"%>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Settings.aspx.cs" Inherits="Settings" Async="true"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
-    <div class="panel panel-default">
-        <div class="panel-heading"><strong>Create new project</strong></div>
+<div class="panel panel-default">
+        <div class="panel-heading"><strong>Change project settings</strong></div>
         <div class="panel-body">
             <div class="form-horizontal">
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="txtProjectName"><span style="color:red">*&nbsp;</span>Project name</label>
+                    <label class="col-sm-2 control-label" for="txtProjectName">Project name</label>
                     <div class="col-sm-5">
                         <asp:textbox class="form-control" id="txtProjectName" placeholder="Enter project name" runat="server"></asp:textbox>
                     </div>
@@ -39,9 +39,10 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-5">
-                        <asp:button cssclass="btn btn-success" id="btnCreateProject" onclick="btnCreateProject_Click" runat="server" text="Create"></asp:button><br />
+                        <asp:button cssclass="btn btn-success" id="btnSaveChanges" onclick="btnSaveChanges_Click" runat="server" text="Save changes"></asp:button>
+                        <asp:button cssclass="btn btn-warning" id="btnCancel" onclick="btnCancel_Click" runat="server" text="Cancel"></asp:button>
+                        <asp:button cssclass="btn btn-danger" id="btnDelete" onclick="btnDelete_Click" runat="server" text="Delete project"></asp:button><br />
                         <asp:label cssclass="label label-danger" id="lblMessages" runat="server" Text=""></asp:label><br /><br />
-                        <span style="color:red">*</span> Indicates required field.
                     </div>                 
                 </div>
             </div>

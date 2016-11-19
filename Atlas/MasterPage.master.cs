@@ -24,10 +24,16 @@ public partial class MasterPage : System.Web.UI.MasterPage
         lbProjects.Items.Add(new ListItem("Create new project"));
 
         // Get all user's projects from DB and add them to listbox
-        List<project> userProjects = GetAllProjectsForUser("Default"); // Change this if logged in (once login-system is done). "Default" account has projects that are displayed to guests (= not logged in).
-        foreach (project p in userProjects)
+        try
         {
-            lbProjects.Items.Add(new ListItem(p.name, p.name));
+            List<project> userProjects = Database.GetAllProjectsForUser("Default"); // Change this if logged in (once login-system is done). Default-user has projects that are displayed to anyone (= not logged in).
+            foreach (project p in userProjects)
+            {
+                lbProjects.Items.Add(new ListItem(p.name, p.id.ToString()));
+            }
+        }
+        catch (Exception)
+        {
         }
     }
 
@@ -44,31 +50,5 @@ public partial class MasterPage : System.Web.UI.MasterPage
             Session["ActiveProject"] = lbProjects.SelectedValue;
             Response.Redirect("Home.aspx", true);
         }
-    }
-
-    /// <summary>
-    /// Gets all projects for given user from DB.
-    /// </summary>
-    protected List<project> GetAllProjectsForUser(string username)
-    {
-        try
-        {
-            using (var db = new atlasEntities())
-            {
-                var ret = from u in db.users
-                          where u.username == username
-                          select u;
-                var user = ret.FirstOrDefault();
-                if (user != null)
-                {
-                    return user.projects.ToList();
-                }
-            }
-        }
-        catch (Exception)
-        {
-
-        }
-        return null;
     }
 }
