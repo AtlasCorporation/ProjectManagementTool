@@ -6,7 +6,7 @@ using System.Web;
 public class Database
 {
     /// <summary>
-    /// Gets project object from DB with the given project name.
+    /// Gets project object from DB with the given project ID.
     /// </summary>
     public static project GetProjectFromDb(int id)
     {

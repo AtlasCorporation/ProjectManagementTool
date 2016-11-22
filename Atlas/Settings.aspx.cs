@@ -87,10 +87,10 @@ public partial class Settings : System.Web.UI.Page
                 }
 
                 // Update project's properties
-                projectToChange.name = txtProjectName.Text;
-                projectToChange.description = txtProjectDesc.Text;
-                projectToChange.github_username = txtGithubUser.Text;
-                projectToChange.github_reponame = ddlGithubRepo.Text;
+                projectToChange.name = projectName;
+                projectToChange.description = projectDesc;
+                projectToChange.github_username = githubUser;
+                projectToChange.github_reponame = githubRepo;
 
                 // Change project to private/public
                 user defaultUser = null;

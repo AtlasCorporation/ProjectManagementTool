@@ -7,6 +7,8 @@ using Octokit;
 
 public class Github
 {
+    protected const int MAX_COMMITS = 10;
+
     /// <summary>
     /// Gets Github repositories for given user.
     /// </summary>
@@ -25,6 +27,35 @@ public class Github
                     repoNames.Add(r.Name);
                 }
                 return repoNames;
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Gets commits from Github for given user/repo.
+    /// </summary>
+    public static async Task<List<GitHubCommit>> GetCommits(string user, string repo)
+    {
+        try
+        {
+            var client = new GitHubClient(new ProductHeaderValue("atlas"));
+            var commits = await client.Repository.Commit.GetAll(user, repo);
+            List<GitHubCommit> commitList = new List<GitHubCommit>();
+
+            if (commits != null && commits.Count > 0)
+            {
+                for (int i = 0; i < commits.Count; i++)
+                {
+                    if (i == 10) // Take only latest (10) commits
+                        break;
+                    commitList.Add(commits[i]);
+                }
+                return commitList;
             }
         }
         catch (Exception)

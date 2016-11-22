@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Octokit;
 
 public partial class Home : System.Web.UI.Page
 {
@@ -25,7 +26,7 @@ public partial class Home : System.Web.UI.Page
             }
         }
 
-        if (!IsPostBack)
+        if (!IsPostBack && activeProject != null)
         {
             InitProjectHomePage();
         }
@@ -36,10 +37,22 @@ public partial class Home : System.Web.UI.Page
     /// </summary>
     protected void InitProjectHomePage()
     {
-        if (activeProject != null)
+        lblProjectName.Text = activeProject.name;
+        lblProjectDesc.Text = activeProject.description;
+        InitGithub();
+    }
+
+    /// <summary>
+    /// Initializes stuff from Github (commits etc).
+    /// </summary>
+    protected async void InitGithub()
+    {
+        lblCommitFeed.Text = "";
+        List<GitHubCommit> commits = await Github.GetCommits(activeProject.github_username, activeProject.github_reponame);
+        foreach (GitHubCommit c in commits)
         {
-            txtProjectName.Text = activeProject.name;
-            txtProjectDesc.Text = activeProject.description;
+            if (c.Committer.Login != null && c.Commit.Message != null)
+                lblCommitFeed.Text += "- " + c.Committer.Login + " -- " + c.Commit.Message + "<br/>";
         }
     }
 }
