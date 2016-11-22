@@ -7,3 +7,4 @@ Tunnit:
 * 8.11 - 5h Projektien luonti ja listaus
 * 9.11 - 2h Githubista repot + async
 * 18.11 - 6,5h Projektien muokkaus ja poistaminen, private/public projektit
+* 23.11 - 1h Commit feedin aloitus
