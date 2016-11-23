@@ -9,17 +9,15 @@ using System.Web;
 
 public class SiteLogic
 {
-    Database db;
 
     public SiteLogic()
     {
-        db = new Database();
     }
 
-    public string GetTasksInJson(int projectID)
+    public static string GetTasksInJson(int projectID)
     {
         string tasksJson = "{data:[";
-        List<Task> tasks = db.GetTasks(projectID);
+        List<Task> tasks = Database.GetTasks(projectID);
         Task tempTask;
         for (int i = 0; i < tasks.Count; i++)
         {

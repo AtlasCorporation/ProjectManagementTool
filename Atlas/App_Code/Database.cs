@@ -6,7 +6,7 @@ using System.Web;
 
 public class Database
 {
-    atlasEntities ctx;
+    static atlasEntities ctx;
     public Database()
     {
         ctx = new atlasEntities();
@@ -64,7 +64,7 @@ public class Database
     #endregion PROJECTS
 
     #region GANTT
-    public IEnumerable<task> GetChildren(int inputID)
+    public static IEnumerable<task> GetChildren(int inputID)
     {
         // haetaan vanhempi
         var query = ctx.tasks.Where(x => x.id == inputID).ToList();
@@ -80,7 +80,7 @@ public class Database
         return query;
     }
 
-    public IEnumerable<int> GetChildrenIds(int inputID)
+    public static IEnumerable<int> GetChildrenIds(int inputID)
     {
         using (var db = new atlasEntities())
         {
@@ -100,7 +100,7 @@ public class Database
         }
     }
 
-    public List<Task> GetProjectWorkingHours(int projectID)
+    public static List<Task> GetProjectWorkingHours(int projectID)
     {
         using (var db = new atlasEntities())
         {
@@ -139,7 +139,7 @@ public class Database
     }
 
     // hakee taskien id-listan perusteella yhteistuntimäärän taskeista
-    protected int GetWorkingHours(IEnumerable<int> tasks)
+    protected static int GetWorkingHours(IEnumerable<int> tasks)
     {
         using (var db = new atlasEntities())
         {
@@ -167,7 +167,7 @@ public class Database
     }
 
 
-    public List<Task> GetTasks(int projectID)
+    public static List<Task> GetTasks(int projectID)
     {
         // hae kaikki projektiin liittyvien donetaskien ja taskien olennainen data
         var donetasks = (from dtask in ctx.donetasks

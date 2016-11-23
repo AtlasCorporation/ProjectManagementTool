@@ -32,10 +32,9 @@ public partial class Home : System.Web.UI.Page
             InitProjectHomePage();
         }
 
-        // Pie chart
-        Database db = new Database();
+        // Pie chart        
         // anna projektin ID getworkinghoursille
-        var data = db.GetProjectWorkingHours(1);
+        var data = Database.GetProjectWorkingHours(1);
         BindDataToGantt(data);
 
         gvData.DataSource = data;

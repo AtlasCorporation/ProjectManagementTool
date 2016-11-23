@@ -13,7 +13,6 @@ public partial class Gantt : System.Web.UI.Page
     }
     public static string GetJsonData()
     {
-        SiteLogic sl = new SiteLogic();
-        return sl.GetTasksInJson(1);
+        return SiteLogic.GetTasksInJson(1);
     }
 }
