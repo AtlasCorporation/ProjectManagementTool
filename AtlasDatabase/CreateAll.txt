@@ -27,10 +27,11 @@ CREATE TABLE task (
 CREATE TABLE donetask ( 
  id INT AUTO_INCREMENT PRIMARY KEY,
  task_id INT NOT NULL,
- whodid VARCHAR(255) NOT NULL,
+ user_id INT NOT NULL,
  worktime INT(2) NOT NULL,
  date DATETIME,
- FOREIGN KEY task_donetask_key (task_id) REFERENCES task(id)
+ FOREIGN KEY task_donetask_key (task_id) REFERENCES task(id),
+ FOREIGN KEY user_donetask_key (user_id) REFERENCES user(id)
 );
 
 CREATE TABLE user_project(

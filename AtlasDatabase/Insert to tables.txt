@@ -44,12 +44,12 @@ VALUES(
 INSERT INTO donetask(
 	task_id,whodid,worktime,date)
 VALUES(
-	1, 'me', 4, '2016-04-07 14:17:53');
+	1, 1, 4, '2016-04-07 14:17:53');
 
 INSERT INTO donetask(
 	task_id,whodid,worktime,date)
 VALUES(
-	3, 'me', 3, '2016-04-07 14:17:53');
+	3, 2, 3, '2016-04-07 14:17:53');
 
 /*user_project*/
 INSERT INTO user_project(
