@@ -18,6 +18,7 @@ public partial class CreateUser : System.Web.UI.Page
     private string hashedPassword;
     private string pwCheck;
     private byte[] pw_bytes;
+    private string usernameParam;
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -33,18 +34,20 @@ public partial class CreateUser : System.Web.UI.Page
             pw = username.Text + salt + password.Text;
             pw_bytes = ASCIIEncoding.ASCII.GetBytes(pw);
             SHA512Managed sha512 = new SHA512Managed();
+            usernameParam = username.Text;
 
             var hashed_byte_array = sha512.ComputeHash(pw_bytes);
             hashedPassword = Convert.ToBase64String(hashed_byte_array);
 
             //Username EXISTS tsekkaus
             string ConnString = ConfigurationManager.ConnectionStrings["Mysli2"].ConnectionString;
-            string query = "select * from user where username='" + username.Text + "'";
+            string query = "select * from user where username=@username";
             try
             {
                 MySqlConnection conn = new MySqlConnection(ConnString);
                 conn.Open();
                 MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@username", usernameParam);
                 MySqlDataReader MyReader = cmd.ExecuteReader();
                 if (MyReader.HasRows)
                 {
@@ -71,11 +74,14 @@ public partial class CreateUser : System.Web.UI.Page
     private void createUser()
     {
         string ConnString = ConfigurationManager.ConnectionStrings["Mysli2"].ConnectionString;
-        string insert = "Insert into user(username, password, salt) values('" + username.Text + "','" + hashedPassword + "','" + salt + "')";
+        string insert = "Insert into user(username, password, salt) values(@username,@hashedPassword,@salt)";
         try
         {
             MySqlConnection conn = new MySqlConnection(ConnString);
             MySqlCommand MyCommand = new MySqlCommand(insert, conn);
+            MyCommand.Parameters.AddWithValue("@username", usernameParam);
+            MyCommand.Parameters.AddWithValue("@hashedPassword", hashedPassword);
+            MyCommand.Parameters.AddWithValue("@salt", salt);
             MySqlDataReader MyReader;
             conn.Open();
             MyReader = MyCommand.ExecuteReader();
