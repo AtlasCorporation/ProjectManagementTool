@@ -15,7 +15,7 @@
                // gantt.config.subscales = [{ unit: "hour", step: 12, date: "%H:%i" }];
                 gantt.config.duration_unit = "hour";
                 gantt.config.duration_step = 1;
-
+                gantt.config.readonly = true;
                 gantt.init("ganttDiv");
                 gantt.parse(<%= GetJsonData() %>);
             </script>
