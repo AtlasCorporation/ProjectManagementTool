@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Octokit;
+using System.Web.UI.DataVisualization.Charting;
 
 public partial class Home : System.Web.UI.Page
 {
@@ -30,6 +31,15 @@ public partial class Home : System.Web.UI.Page
         {
             InitProjectHomePage();
         }
+
+        // Pie chart
+        Database db = new Database();
+        // anna projektin ID getworkinghoursille
+        var data = db.GetProjectWorkingHours(1);
+        BindDataToGantt(data);
+
+        gvData.DataSource = data;
+        gvData.DataBind();
     }
 
     /// <summary>
@@ -53,6 +63,27 @@ public partial class Home : System.Web.UI.Page
         {
             if (c.Committer.Login != null && c.Commit.Message != null)
                 lblCommitFeed.Text += "- " + c.Committer.Login + " -- " + c.Commit.Message + "<br/>";
+        }
+    }
+
+    protected void BindDataToGantt(IEnumerable<Task> tasks)
+    {
+        ChartArea chartArea = new ChartArea("ChartArea");
+        pieChart.ChartAreas.Add(chartArea);
+        pieChart.ChartAreas["ChartArea"].Area3DStyle.Enable3D = true;
+        pieChart.Series.Clear();
+        //pieChart.Palette = ChartColorPalette.EarthTones;
+        pieChart.Titles.Add("Hours spent on project");
+        pieChart.Series.Add("WorkHours");
+        pieChart.Series["WorkHours"].ChartType = SeriesChartType.Pie;
+        DataPoint point;
+
+        foreach (Task item in tasks)
+        {
+            point = new DataPoint(0, item.Duration);
+            point.AxisLabel = item.Text;
+            //point.LegendText = item.Name;
+            pieChart.Series["WorkHours"].Points.Add(point);
         }
     }
 }
