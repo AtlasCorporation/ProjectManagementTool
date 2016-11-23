@@ -6,11 +6,8 @@ using System.Web;
 
 public class Database
 {
-    static atlasEntities ctx;
-    public Database()
-    {
-        ctx = new atlasEntities();
-    }
+    static atlasEntities ctx = new atlasEntities();
+    public Database(){}
     #region PROJECTS
     /// <summary>
     /// Gets project object from DB with the given project ID.
@@ -138,6 +135,48 @@ public class Database
        
     }
 
+    public static List<Task> GetProjectWorkingHoursForUser(int projectID, int userID)
+    {
+        try
+        {
+            using (var db = new atlasEntities())
+            {
+                List<Task> TopTasks = new List<Task>();
+                Task tempTask;
+                IEnumerable<int> tasks;
+                int tempHours;
+
+                // haetaan ensimmäisen polven taskit, joilla task_id == null
+                var majorTasksQuery = from c in db.tasks
+                                      where c.project_id == projectID && c.task_id == null
+                                      select c;
+
+                // iteroidaan löydettyjen taskien läpi
+                foreach (var item in majorTasksQuery)
+                {
+                    // luo tilapäisolio taskin tiedoilla
+                    tempTask = new Task(item.id, item.name);
+                    // hae taskin kaikki lapset listaan
+                    tasks = GetChildrenIds(item.id);
+                    // hae työtunnit jokaisesta listan taskista tilapäisolion tietoihin
+                    tempHours = GetWorkingHours(tasks, userID);
+                    // varmistetaan että työtunteja on olemassa
+                    if (tempHours > 0)
+                    {
+                        tempTask.Duration = tempHours;
+                        // tallennetaan tilapäisolio pysyvään listaan
+                        TopTasks.Add(tempTask);
+                    }
+                }
+                return TopTasks;
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
     // hakee taskien id-listan perusteella yhteistuntimäärän taskeista
     protected static int GetWorkingHours(IEnumerable<int> tasks)
     {
@@ -166,6 +205,34 @@ public class Database
         }
     }
 
+    // hakee taskien id-listan ja userID:n perusteella yhteistuntimäärän taskeista tietylle käyttäjälle
+    protected static int GetWorkingHours(IEnumerable<int> tasks, int userID)
+    {
+        using (var db = new atlasEntities())
+        {
+            try
+            {
+                var query = (from dtask in db.donetasks
+                             join t in tasks on dtask.task_id equals t
+                             where dtask.task_id == t && dtask.user_id == userID
+                             select dtask.worktime);
+
+                if (query.Count() > 0)
+                {
+                    return query.Sum();
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    }
+
 
     public static List<Task> GetTasks(int projectID)
     {
@@ -173,7 +240,7 @@ public class Database
         var donetasks = (from dtask in ctx.donetasks
                          join t in (from c in ctx.tasks where c.project_id == projectID select c) on dtask.task_id equals t.id
                          where dtask.task_id == t.id
-                         select new { TaskID = t.id, dTaskID = dtask.id, Date = dtask.date, Worker = dtask.whodid, WorkTime = dtask.worktime, Name = t.name, Parent = t.task_id });
+                         select new { TaskID = t.id, dTaskID = dtask.id, Date = dtask.date, Worker = dtask.user_id, WorkTime = dtask.worktime, Name = t.name, Parent = t.task_id });
 
         Task tempTask;
 

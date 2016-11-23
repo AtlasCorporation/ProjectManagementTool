@@ -20,6 +20,20 @@ public partial class Home : System.Web.UI.Page
             try
             {
                 activeProject = Database.GetProjectFromDb(Convert.ToInt32(Session["ActiveProject"]));
+                // Pie chartit
+                // anna projektin ID getworkinghoursille
+                if(Session["LoggedUser"] != null)
+                {
+
+                    //var data = Database.GetProjectWorkingHours(1);
+                    // TODO: tarvitaan userin ID sessionista. Placeholderina nyt Prome-tilin id.
+                    var data = Database.GetProjectWorkingHoursForUser(1, 7);
+                    BindDataToGantt(data);
+
+                    gvData.DataSource = data;
+                    gvData.DataBind();
+                }
+                
             }
             catch (Exception ex)
             {
@@ -32,13 +46,7 @@ public partial class Home : System.Web.UI.Page
             InitProjectHomePage();
         }
 
-        // Pie chart        
-        // anna projektin ID getworkinghoursille
-        var data = Database.GetProjectWorkingHours(1);
-        BindDataToGantt(data);
-
-        gvData.DataSource = data;
-        gvData.DataBind();
+        
     }
 
     /// <summary>
