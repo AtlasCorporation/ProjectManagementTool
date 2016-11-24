@@ -18,35 +18,80 @@ public partial class Home : System.Web.UI.Page
         {
             // Get the active project's data from DB
             try
-            {
+            {                
                 activeProject = Database.GetProjectFromDb(Convert.ToInt32(Session["ActiveProject"]));
+
                 // Pie chartit
-                // anna projektin ID getworkinghoursille
-                if(Session["LoggedUser"] != null)
+                InitMainPieChart();
+                if (Session["LoggedUser"] != null)
                 {
-
-                    //var data = Database.GetProjectWorkingHours(1);
-                    // TODO: tarvitaan userin ID sessionista. Placeholderina nyt Prome-tilin id.
-                    var data = Database.GetProjectWorkingHoursForUser(1, 7);
-                    BindDataToGantt(data);
-
-                    gvData.DataSource = data;
-                    gvData.DataBind();
+                    InitUserPieChart();
                 }
-                
             }
             catch (Exception ex)
             {
                 lblMessages.Text = ex.Message;
             }
         }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("Clearing piecharts");
+            userPieChart.Series.Clear();
+            usersPieChart.Series.Clear();
+        }
 
         if (!IsPostBack && activeProject != null)
         {
             InitProjectHomePage();
         }
+    }
 
-        
+    protected void InitUserPieChart()
+    {
+        // TODO: tarvitaan projektin ja userin ID sessionista.
+        var data = Database.GetProjectWorkingHoursForUser(1, 7);
+
+        ChartArea chartArea = new ChartArea("ChartArea");
+        userPieChart.ChartAreas.Add(chartArea);
+        userPieChart.ChartAreas["ChartArea"].Area3DStyle.Enable3D = true;
+        userPieChart.Series.Clear();
+        //pieChart.Palette = ChartColorPalette.EarthTones;
+        userPieChart.Titles.Add("Hours spent on project by " + Session["LoggedUser"]);
+        userPieChart.Series.Add("WorkHours");
+        userPieChart.Series["WorkHours"].ChartType = SeriesChartType.Pie;
+        DataPoint point;
+
+        foreach (Task item in data)
+        {
+            point = new DataPoint(0, item.Duration);
+            point.AxisLabel = item.Text;
+            //point.LegendText = item.Name;
+            userPieChart.Series["WorkHours"].Points.Add(point);
+        }
+    }
+
+    protected void InitMainPieChart()
+    {
+        // TODO: tarvitaan projektin id sessionista
+        var data = Database.GetProjectWorkingHours(1);
+
+        ChartArea chartArea = new ChartArea("ChartArea");
+        usersPieChart.ChartAreas.Add(chartArea);
+        usersPieChart.ChartAreas["ChartArea"].Area3DStyle.Enable3D = true;
+        usersPieChart.Series.Clear();
+        //pieChart.Palette = ChartColorPalette.EarthTones;
+        usersPieChart.Titles.Add("Total hours spent on project");
+        usersPieChart.Series.Add("WorkHours");
+        usersPieChart.Series["WorkHours"].ChartType = SeriesChartType.Pie;
+        DataPoint point;
+
+        foreach (Task item in data)
+        {
+            point = new DataPoint(0, item.Duration);
+            point.AxisLabel = item.Text;
+            //point.LegendText = item.Name;
+            usersPieChart.Series["WorkHours"].Points.Add(point);
+        }
     }
 
     /// <summary>
@@ -70,27 +115,6 @@ public partial class Home : System.Web.UI.Page
         {
             if (c.Committer.Login != null && c.Commit.Message != null)
                 lblCommitFeed.Text += "- " + c.Committer.Login + " -- " + c.Commit.Message + "<br/>";
-        }
-    }
-
-    protected void BindDataToGantt(IEnumerable<Task> tasks)
-    {
-        ChartArea chartArea = new ChartArea("ChartArea");
-        pieChart.ChartAreas.Add(chartArea);
-        pieChart.ChartAreas["ChartArea"].Area3DStyle.Enable3D = true;
-        pieChart.Series.Clear();
-        //pieChart.Palette = ChartColorPalette.EarthTones;
-        pieChart.Titles.Add("Hours spent on project");
-        pieChart.Series.Add("WorkHours");
-        pieChart.Series["WorkHours"].ChartType = SeriesChartType.Pie;
-        DataPoint point;
-
-        foreach (Task item in tasks)
-        {
-            point = new DataPoint(0, item.Duration);
-            point.AxisLabel = item.Text;
-            //point.LegendText = item.Name;
-            pieChart.Series["WorkHours"].Points.Add(point);
         }
     }
 }

@@ -132,12 +132,31 @@ public class Database
     #endregion
 
     #region GANTT
+    #region Backups
+    /*
+    public static IEnumerable<task> GetChildren(int taskID, int tier)
+    {
+        IEnumerable<task> tasks = Enumerable.Empty<task>();
+        var query = (from c in ctx.tasks
+                     where c.task_id == taskID
+                     select c).ToList();
+
+        for (int i = 0; i < query.Count(); i++)
+        {
+            query.ElementAt(i).tier = tier + 1;
+            IEnumerable<task> temp = new task[] { query.ElementAt(i) };
+
+            tasks = tasks.Union(temp).Union(GetChildren(query.ElementAt(i).id, tier + 1));
+        }
+        return tasks;
+    }
+
     public static IEnumerable<task> GetChildren(int inputID)
     {
         // haetaan vanhempi
         var query = ctx.tasks.Where(x => x.id == inputID).ToList();
-        // loopissa haetaan queryn seuraava rivi ja etsitään kaikki sen lapset, jotka lisätään unionilla queryn loppuun. 
-        // queryn koko kasvaa loopin aikana kunnes kaikki lapset on haettu. 
+        // loopissa haetaan queryn seuraava rivi ja etsitään kaikki sen lapset, jotka lisätään unionilla queryn loppuun.
+        // queryn koko kasvaa loopin aikana kunnes kaikki lapset on haettu.
         for (int i = 0; i < query.Count(); i++)
         {
             int currentID = query.ElementAt(i).id;
@@ -147,6 +166,7 @@ public class Database
 
         return query;
     }
+  
 
     public static IEnumerable<int> GetChildrenIds(int inputID)
     {
@@ -166,6 +186,55 @@ public class Database
 
         return query;
         }
+    }*/
+    #endregion
+    public static IEnumerable<task> GetProjectTasks(int projectID)
+    {
+        IEnumerable<task> tasks = Enumerable.Empty<task>();
+        // hae ylimmät taskit projektista
+        var majorTasksQuery = (from c in ctx.tasks
+                               where c.project_id == projectID && c.task_id == null
+                               select c).ToList();
+
+        // hae loput
+        foreach (var item in majorTasksQuery)
+        {            
+            IEnumerable<task> temp = new task[] { item };
+            tasks = tasks.Union(temp).Union(GetChildren(item.id));
+        }
+
+        return tasks;
+    }
+
+    public static IEnumerable<task> GetChildren(int taskID)
+    {
+        IEnumerable<task> tasks = Enumerable.Empty<task>();
+        var query = (from c in ctx.tasks
+                     where c.task_id == taskID
+                     select c).ToList();
+
+        for (int i = 0; i < query.Count(); i++)
+        {
+            IEnumerable<task> temp = new task[] { query.ElementAt(i) };
+
+            tasks = tasks.Union(temp).Union(GetChildren(query.ElementAt(i).id));
+        }
+        return tasks;
+    }
+
+    public static IEnumerable<int> GetChildrenIds(int taskID)
+    {
+        IEnumerable<int> tasks = Enumerable.Empty<int>();
+        var query = (from c in ctx.tasks
+                     where c.task_id == taskID
+                     select c.id).ToList();
+
+        for (int i = 0; i < query.Count(); i++)
+        {
+            IEnumerable<int> temp = new int[] { query.ElementAt(i) };
+            tasks = tasks.Union(temp).Union(GetChildrenIds(query.ElementAt(i)));
+        }
+        return tasks;
     }
 
     public static List<Task> GetProjectWorkingHours(int projectID)
@@ -203,7 +272,6 @@ public class Database
 
             return TopTasks;
         }
-       
     }
 
     public static List<Task> GetProjectWorkingHoursForUser(int projectID, int userID)
@@ -339,5 +407,7 @@ public class Database
 
         return Tasks;
     }
+
+
     #endregion
 }

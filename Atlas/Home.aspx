@@ -11,8 +11,8 @@
     <h3>Latest commits</h3>
     <asp:Label id="lblCommitFeed" runat="server" Text=""></asp:Label>
     <div>
-        <asp:Chart ID="pieChart" runat="server" />   
-        <asp:GridView runat="server" ID="gvData"></asp:GridView>
-        Logged in as: <%=Session["LoggedUser"] %>
+        <asp:Chart ID="usersPieChart" runat="server" />   
+        <asp:Chart ID="userPieChart" runat="server" />           
     </div>
+    Logged in as: <%=Session["LoggedUser"] %>
 </asp:Content>
