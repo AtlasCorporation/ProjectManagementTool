@@ -23,13 +23,32 @@ public partial class MasterPage : System.Web.UI.MasterPage
         // Always add "Create new" as first item (index = 0)
         lbProjects.Items.Add(new ListItem("Create new project"));
 
-        // Get all user's projects from DB and add them to listbox
+        // List of all projects user has
+        List<project> userProjects = new List<project>();
+
+        // Get all user's projects from DB
         try
         {
-            List<project> userProjects = Database.GetAllProjectsForUser("Default"); // Change this if logged in (once login-system is done). Default-user has projects that are displayed to anyone (= not logged in).
-            foreach (project p in userProjects)
+            // Check if some user is logged in
+            if (Session["LoggedUser"] != null)
             {
-                lbProjects.Items.Add(new ListItem(p.name, p.id.ToString()));
+                string loggedUser = Session["LoggedUser"].ToString();
+                // Get logged in user's projects
+                userProjects = Database.GetAllProjectsForUser(loggedUser);
+            }
+            // Not logged in, get Default-user's projects
+            else
+            {
+                userProjects = Database.GetAllProjectsForUser("Default");
+            }
+
+            // Add all user's projects to listbox
+            if (userProjects != null)
+            {
+                foreach (project p in userProjects)
+                {
+                    lbProjects.Items.Add(new ListItem(p.name, p.id.ToString()));
+                }
             }
         }
         catch (Exception)

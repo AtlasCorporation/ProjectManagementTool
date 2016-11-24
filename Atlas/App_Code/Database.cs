@@ -58,7 +58,78 @@ public class Database
         }
         return null;
     }
-    #endregion PROJECTS
+
+    /// <summary>
+    /// Adds given project to database. Returns false if project with the same name already exists.
+    /// </summary>
+    public static bool AddProject(project projectToAdd)
+    {
+        try
+        {
+            using (var db = new atlasEntities())
+            {
+                // Check if project with the same name already exists
+                foreach (project p in db.projects)
+                {
+                    if (p.name == projectToAdd.name)
+                        return false;
+                }
+                db.projects.Add(projectToAdd);
+                db.SaveChanges();
+                return true;
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Adds given project to given user.
+    /// </summary>
+    public static void AddProjectToUser(string username, int projectID)
+    {        
+        try
+        {
+            using (var db = new atlasEntities())
+            {
+                // Get user from DB
+                user user = null;
+                foreach (var u in db.users)
+                {
+                    if (u.username == username)
+                    {
+                        user = u;
+                        break;
+                    }
+                }
+
+                // Get project from DB
+                project project = null;
+                foreach (var p in db.projects)
+                {
+                    if (p.id == projectID)
+                    {
+                        project = p;
+                        break;
+                    }
+                }
+
+                // Add project to user
+                if (user != null && project != null)
+                {
+                    user.projects.Add(project);
+                }
+                db.SaveChanges(); 
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    #endregion
 
     #region GANTT
     public static IEnumerable<task> GetChildren(int inputID)

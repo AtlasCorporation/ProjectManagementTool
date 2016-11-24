@@ -30,46 +30,32 @@ public partial class CreateProject : System.Web.UI.Page
     {
         try
         {
-            using (var db = new atlasEntities())
+            project newProject = new project
             {
-                project newProject = new project
-                {
-                    name = projectName,
-                    description = projectDesc,
-                    github_username = githubUser,
-                    github_reponame = githubRepo
-                };
-                // Check if project with the same name already exists
-                foreach (project p in db.projects)
-                {
-                    if (p.name == newProject.name)
-                    {
-                        lblMessages.Text = "Project named '" + newProject.name + "' already exists!";
-                        return;
-                    }
-                }
-                db.projects.Add(newProject);
+                name = projectName,
+                description = projectDesc,
+                github_username = githubUser,
+                github_reponame = githubRepo
+            };
 
-                //TODO: Add project to currently logged in user
+            // Add project to DB
+            if (!Database.AddProject(newProject))
+                lblMessages.Text = "Project named '" + newProject.name + "' already exists!";
 
-                // User wants project to be public -> add it to default-user
-                if (!cbPrivateProject.Checked)
-                {
-                    user defaultUser = null;
-                    foreach (var u in db.users)
-                    {
-                        if (u.username == "Default")
-                        {
-                            defaultUser = u;
-                            break;
-                        }
-                    }
-                    if (defaultUser != null)
-                        defaultUser.projects.Add(newProject);
-                }
-                db.SaveChanges();
-                Session["ActiveProject"] = newProject.id;
+            // Add project to currently logged in user
+            if (Session["LoggedUser"] != null)
+            {
+                string loggedUser = Session["LoggedUser"].ToString();
+                Database.AddProjectToUser(loggedUser, newProject.id);
             }
+
+            // User wants project to be public -> add it to default-user
+            if (!cbPrivateProject.Checked)
+            {
+                Database.AddProjectToUser("Default", newProject.id);
+            }
+
+            Session["ActiveProject"] = newProject.id;          
             Response.Redirect("Home.aspx", true);
         }
         catch (Exception ex)

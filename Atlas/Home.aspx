@@ -13,6 +13,6 @@
     <div>
         <asp:Chart ID="pieChart" runat="server" />   
         <asp:GridView runat="server" ID="gvData"></asp:GridView>
-        Sivulle lähetettiin parametrinä viesti: <%=Session["LoggedUser"] %>
+        Logged in as: <%=Session["LoggedUser"] %>
     </div>
 </asp:Content>

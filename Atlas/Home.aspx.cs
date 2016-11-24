@@ -56,7 +56,7 @@ public partial class Home : System.Web.UI.Page
     {
         lblProjectName.Text = activeProject.name;
         lblProjectDesc.Text = activeProject.description;
-        InitGithub();
+        //InitGithub();
     }
 
     /// <summary>
