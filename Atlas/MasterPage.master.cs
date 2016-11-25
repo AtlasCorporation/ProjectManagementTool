@@ -9,10 +9,9 @@ public partial class MasterPage : System.Web.UI.MasterPage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        CheckLogin();
         if (!IsPostBack)
-        {
             InitProjects();
-        }
     }
 
     /// <summary>
@@ -53,6 +52,23 @@ public partial class MasterPage : System.Web.UI.MasterPage
         }
         catch (Exception)
         {
+        }
+    }
+
+    /// <summary>
+    /// Changes link to logout if you're currently logged in and vice versa.
+    /// </summary>
+    protected void CheckLogin()
+    {
+        if (Session["LoggedUser"] != null)
+        {
+            aLogin.HRef = ResolveUrl("~/Logout.aspx");
+            aLogin.InnerHtml = "<span class='glyphicon glyphicon-log-out'></span> Logout";
+        }
+        else
+        {
+            aLogin.HRef = ResolveUrl("~/Login.aspx");
+            aLogin.InnerHtml = "<span class='glyphicon glyphicon-log-in'></span> Login";
         }
     }
 

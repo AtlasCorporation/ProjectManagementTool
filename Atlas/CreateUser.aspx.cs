@@ -56,7 +56,7 @@ public partial class CreateUser : System.Web.UI.Page
                 else //Create new user if username is not taken and passwords match
                 {
                     createUser();
-                    Response.Redirect("Login.aspx");
+                    Response.Redirect("Login.aspx?success=true");
                 }
                 conn.Close();
             }

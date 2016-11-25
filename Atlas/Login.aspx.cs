@@ -21,8 +21,14 @@ public partial class Login : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-
+        // Display message after successful account creation
+        string s = Request.QueryString["success"];
+        if (s != null)
+            divAccountCreated.Style["display"] = "block";
+        else
+            divAccountCreated.Style["display"] = "none";
     }
+
     protected void LogIn_Click(object sender, EventArgs e)
     {
         string ConnString = ConfigurationManager.ConnectionStrings["Mysli2"].ConnectionString;

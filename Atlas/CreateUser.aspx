@@ -3,19 +3,37 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
-     <div>
-        <asp:Label ID="Label1" runat="server" Text="Username"></asp:Label>
-        <asp:TextBox ID="username" runat="server"></asp:TextBox>
-        <br />
-        <asp:Label ID="Label2" runat="server" Text="Password"></asp:Label>
-        <asp:TextBox ID="password" runat="server" TextMode="Password"></asp:TextBox>
-        <br />
-        <asp:Label ID="Label7" runat="server" Text="Retype Password"></asp:Label>
-        <asp:TextBox ID="repassword" runat="server" TextMode="Password"></asp:TextBox>
-        <br />
-        <asp:Label ID="lblMessages" runat="server" Text="..."></asp:Label>
-        <br />
-        <asp:Button ID="createAcc" runat="server" Text="Create acc" OnClick="createAcc_Click" />
+    <div class="panel panel-default">
+    <div class="panel-heading"><strong>Register</strong></div>
+        <div class="panel-body">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="username">Username</label>
+                    <div class="col-sm-5">
+                        <asp:TextBox ID="username" runat="server" cssclass="form-control"></asp:TextBox>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="password">Password</label>
+                    <div class="col-sm-5">
+                        <asp:TextBox ID="password" runat="server" TextMode="Password" cssclass="form-control"></asp:TextBox>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="repassword">Repeat password</label>
+                    <div class="col-sm-5">
+                         <asp:TextBox ID="repassword" runat="server" TextMode="Password" cssclass="form-control"></asp:TextBox>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-5">
+                        <asp:Button ID="createAcc" runat="server" Text="Register" cssclass="btn btn-success" OnClick="createAcc_Click" /><br />
+                        <asp:label cssclass="label label-danger" id="lblMessages" runat="server" Text=""></asp:label><br />
+                        <p><a href="Login.aspx">Already have an account?</a></p>
+                    </div>                 
+                </div>
+            </div>
+        </div>
     </div>
 </asp:Content>
 

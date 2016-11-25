@@ -73,15 +73,13 @@
             <li class="active"><a href="Documentation.aspx"><span class="glyphicon glyphicon-book"></span> Documentation</a></li>
             <li class="active"><a href="Settings.aspx"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
             <li class="active"><a href="TaskEntry.aspx"><span class="glyphicon glyphicon-floppy-disk"></span> Log your work</a></li>
-            <li class="active"><a href="Login.aspx"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-            <li class="active"><a href="CreateUser.aspx"><span class="glyphicon glyphicon-log-in"></span> Register</a></li>
-
+            <li class="active"><a href="Login.aspx" id="aLogin" runat="server"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         </ul>
     </div>
 
     </nav>
     
-    </div>
+    </div>  
 
     <!-- Main Content -->
     <div class="container-fluid">
