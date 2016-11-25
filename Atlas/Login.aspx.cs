@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -31,38 +32,46 @@ public partial class Login : System.Web.UI.Page
         string checkSALT = "";
         string checkPW = "";
         //Select with parameter
-        try
+        string usernameRegex = @"^[A-Za-z0-9]+$";
+        if (Regex.IsMatch(usernamelogin.Text, usernameRegex))
         {
-            MySqlConnection conn = new MySqlConnection(ConnString);
-            MySqlCommand MyCommand = new MySqlCommand(select, conn);
-            MyCommand.Parameters.AddWithValue("@username", username);
-            conn.Open();
-            MySqlDataAdapter da = new MySqlDataAdapter(MyCommand);
+            try
+            {
+                MySqlConnection conn = new MySqlConnection(ConnString);
+                MySqlCommand MyCommand = new MySqlCommand(select, conn);
+                MyCommand.Parameters.AddWithValue("@username", username);
+                conn.Open();
+                MySqlDataAdapter da = new MySqlDataAdapter(MyCommand);
 
-            da.Fill(dt);
+                da.Fill(dt);
 
-            conn.Close();
-            da.Dispose();
-            checkPW = Convert.ToString(dt.Rows[0]["password"]);
-            checkSALT = Convert.ToString(dt.Rows[0]["salt"]);
-        }
-        catch (Exception ex)
-        {
-            lblMessages.Text = "Problems with credentials";
-        }
+                conn.Close();
+                da.Dispose();
+                checkPW = Convert.ToString(dt.Rows[0]["password"]);
+                checkSALT = Convert.ToString(dt.Rows[0]["salt"]);
+            }
+            catch (Exception ex)
+            {
+                lblMessages.Text = "Problems with credentials";
+            }
 
-        //Generates check pattern from userinputs to check if Hash matches one in database
-        pw = usernamelogin.Text + checkSALT + passwordlogin.Text;
-        pw_bytes2 = ASCIIEncoding.ASCII.GetBytes(pw);
-        SHA512Managed sha512 = new SHA512Managed();
+            //Generates check pattern from userinputs to check if Hash matches one in database
+            pw = usernamelogin.Text + checkSALT + passwordlogin.Text;
+            pw_bytes2 = ASCIIEncoding.ASCII.GetBytes(pw);
+            SHA512Managed sha512 = new SHA512Managed();
 
-        var hashed_byte_array = sha512.ComputeHash(pw_bytes2);
+            var hashed_byte_array = sha512.ComputeHash(pw_bytes2);
 
-        if (Convert.ToBase64String(hashed_byte_array) == checkPW)
-        {
-            Session["LoggedUser"] = usernamelogin.Text;
-            lblMessages.Text = "Login success";
-            Response.Redirect("Home.aspx");
+            if (Convert.ToBase64String(hashed_byte_array) == checkPW)
+            {
+                Session["LoggedUser"] = usernamelogin.Text;
+                lblMessages.Text = "Login success";
+                Response.Redirect("Home.aspx");
+            }
+            else
+            {
+                lblMessages.Text = "Password or username is wrong";
+            }
         }
         else
         {

@@ -32,7 +32,7 @@ public partial class Documentation : System.Web.UI.Page
         btnVisibility();
         string path = Server.MapPath("~/Resources/TestiFilu.txt");
         dh.SaveFile(path, ModeText);
-        ShowDocument.Text = dh.ReadFile(path);
+       // ShowDocument.Text = dh.ReadFile(path);
     }
 
     protected void btnEdit_Click(object sender, EventArgs e)

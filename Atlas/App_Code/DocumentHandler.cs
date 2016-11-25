@@ -1,7 +1,9 @@
-﻿using System;
+﻿using MarkedNet;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI.WebControls;
 
@@ -19,8 +21,12 @@ public class DocumentHandler
         //reading file in
         try
         {
-            string text = File.ReadAllText(path).Replace("\n", "<br />").Replace("#", "<h1>").Replace("¤", "</h1>");
-            return text;
+            string text = File.ReadAllText(path);
+
+            var marked = new Marked();
+            var html = marked.Parse(text);
+
+            return html;
         }
         catch (Exception)
         {
