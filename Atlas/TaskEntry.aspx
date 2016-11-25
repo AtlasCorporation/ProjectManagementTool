@@ -6,24 +6,33 @@
     <div class="w3-half w3-content">
 
         <div>
-            <asp:Label runat="server" ID="lblHelp" Text="Select a task:" />
+            <asp:Label runat="server" Text="Selected task:" />
             <asp:Label runat="server" ID="lblSelectedTask" Text="None selected" />
         </div>    
              
         <asp:TreeView runat="server" ID="twTasks"  OnSelectedNodeChanged="twTasks_SelectedNodeChanged"/>
-        <asp:Button cssclass="btn btn-success" runat="server" Text="Add task type" ID="btnShowAddTask" OnClick="btnShowAddTask_Click" />
-        <asp:Button cssclass="btn btn-danger" runat="server" Text="Delete task type" ID="btnDeleteTask" OnClick="btnDeleteTask_Click" />
+        <asp:Button cssclass="btn btn-success" runat="server" Text="Add task" ID="btnShowAddTask" OnClick="btnShowAddTask_Click" />
+        <asp:Button cssclass="btn btn-danger" runat="server" Text="Delete task" ID="btnShowDeleteTask" OnClick="btnShowDeleteTask_Click" />
 
         <div runat="server" id="addTaskDiv" visible="false">  
             <asp:Label runat="server" Text="Name of the new task:" />                
             <asp:TextBox runat="server" placeholder="Enter task name" ID="tbTaskName" />
-            <asp:RequiredFieldValidator runat="server" ControlToValidate="tbTaskName" Text="Required field!" />
+            <!--<asp:RequiredFieldValidator runat="server" ControlToValidate="tbTaskName" Text="Required field!" />-->
+            <br />
+            <asp:CheckBox runat="server" Text="Create root task" ID="cbIsRoot" />
             <div>
                 <asp:Button cssclass="btn btn-success" runat="server" ID="btnAddTask" Text="Ok"  OnClick="btnAddTask_Click"/>
                 <asp:Button cssclass="btn btn-warning" runat="server" ID="btnCancelAddTask" Text="Cancel" OnClick="btnCancelAddTask_Click" />    
             </div>     
         </div>
-
+        <div runat="server" id="removeTaskDiv" visible="false">
+            <asp:Label runat="server" Text="Are you sure you want to delete the task? It may contain logged hours." />
+            <asp:Button cssclass="btn btn-danger" runat="server" ID="btnConfirmDelete" Text="Yes, delete anyway"  OnClick="btnConfirmDelete_Click" />
+            <asp:Button cssclass="btn btn-warning" runat="server" ID="btnCancelDelete" Text="Cancel" OnClick="btnCancelDelete_Click" />    
+        </div>
+        <div>
+            <asp:Label runat="server" ID="lblHelp" />
+        </div>
     </div>   
     <div class="w3-half w3-content">
         <asp:Calendar runat="server" ID="calendar" />        
