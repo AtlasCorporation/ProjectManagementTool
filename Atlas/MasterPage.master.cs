@@ -29,10 +29,16 @@ public partial class MasterPage : System.Web.UI.MasterPage
         // Get all user's projects from DB
         try
         {
+            if(Session["ActiveProject"] != null)
+            {
+                string activeProject = Session["ActiveProject"].ToString();
+                lblProject.Text = activeProject;
+            }
             // Check if some user is logged in
             if (Session["LoggedUser"] != null)
             {
                 string loggedUser = Session["LoggedUser"].ToString();
+                lblUser.Text = loggedUser;
                 // Get logged in user's projects
                 userProjects = Database.GetAllProjectsForUser(loggedUser);
             }

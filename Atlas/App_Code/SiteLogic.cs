@@ -65,6 +65,8 @@ public class SiteLogic
                 tempNode = new TaskNode(tasks.ElementAt(i).id.ToString(), tasks.ElementAt(i).name);
                 nodes.Add(tempNode);
                 tasks.RemoveAt(i);
+                i--;
+                if(i<0){ i = 0; }
             }
         }
 

@@ -14,5 +14,4 @@
         <asp:Chart ID="usersPieChart" runat="server" />   
         <asp:Chart ID="userPieChart" runat="server" />           
     </div>
-    Logged in as: <%=Session["LoggedUser"] %>
 </asp:Content>

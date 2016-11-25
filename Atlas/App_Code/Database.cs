@@ -415,13 +415,66 @@ public class Database
 
     public static int AddDonetask(int taskId, int userId, int workTime, DateTime time)
     {
+        try
+        {
+            using (atlasEntities db = new atlasEntities())
+            {
+                donetask dt = new donetask();
+                dt.task_id = taskId;
+                dt.user_id = userId;
+                dt.worktime = workTime;
+                dt.date = time;
+                db.donetasks.Add(dt);
+                int result = db.SaveChanges();
+                return result;
+            }
+        }
+        catch(Exception ex)
+        {
+            throw ex;
+        }
+        
+    }
+
+    public static int AddTask(int? parentId, int projectId, string taskName)
+    {
+        try
+        {
+            using (atlasEntities db = new atlasEntities())
+            {
+                task t = new task();
+                t.task_id = parentId;
+                t.project_id = projectId;
+                t.name = taskName;
+                db.tasks.Add(t);
+                int result = db.SaveChanges();
+                return result;
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public static int RemoveTask(int id)
+    {
         using (atlasEntities db = new atlasEntities())
         {
-            donetask dt = new donetask();
-            dt.task_id = taskId;
-            dt.user_id = userId;
-            dt.worktime = workTime;
-            dt.date = time;
+            // poistetaan taskiin kiinnitetyt donetaskit
+            var donetasks = from c in db.donetasks where c.task_id == id select c;
+            if(donetasks.Count() > 0)
+            {
+                foreach(donetask item in donetasks)
+                {
+                    db.donetasks.Remove(item);
+                }
+            }
+
+            // poistetaan task
+            var t = (from c in db.tasks where c.id == id select c).FirstOrDefault();
+            db.tasks.Remove(t);
+            // tallenna muutokset
             int result = db.SaveChanges();
             return result;
         }

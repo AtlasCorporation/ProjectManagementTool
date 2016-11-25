@@ -87,6 +87,15 @@
     <div class="container-fluid">
         <div class="side-body">
             <asp:ContentPlaceHolder id="body" runat="server"></asp:ContentPlaceHolder>
+            <div>
+                <asp:Label runat="server" Text="Selected project:" />
+                <asp:Label ID="lblProject" runat="server" Text="None"  />
+            </div>
+            <div>
+                <asp:Label runat="server" Text="Logged user:"/>
+                <asp:Label ID="lblUser" runat="server" Text="None" />
+            </div>
+            
         </div>
     </div>
 

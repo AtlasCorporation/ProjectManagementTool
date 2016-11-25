@@ -7,23 +7,23 @@ using System.Web.UI.WebControls;
 
 public partial class TaskEntry : System.Web.UI.Page
 {
-    protected string selectedTaskName;
-    protected string selectedTaskId;
     protected DateTime selectedDate;
     protected int userId;
     List<string> hours;
     List<string> minutes;
+    
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
         {
             InitControls();
-            if (Session["ActiveProject"] != null)
-            {
-                
-            }
         }
-        lblConfirmSave.Text = "";
+        
+        if(twTasks.SelectedNode != null)
+        {
+            lblSelectedTask.Text = twTasks.SelectedNode.Text;
+        }
+
         if(Session["LoggedUser"] != null)
         {
             //userId = Convert.ToInt32(Session["LoggedUser"]);
@@ -33,7 +33,7 @@ public partial class TaskEntry : System.Web.UI.Page
     protected void InitControls()
     {
         // anna funktiolle projektin id
-        List<TaskNode> nodes = SiteLogic.GetTaskNodes(1);
+        List<TaskNode> nodes = SiteLogic.GetTaskNodes(Convert.ToInt32(Session["ActiveProject"]));
 
         foreach (TaskNode node in nodes)
         {
@@ -64,44 +64,75 @@ public partial class TaskEntry : System.Web.UI.Page
 
     protected void twTasks_SelectedNodeChanged(object sender, EventArgs e)
     {
-        selectedTaskName = twTasks.SelectedNode.Text;
-        selectedTaskId = twTasks.SelectedValue;
-        lblHelp.Text = "Selected task:";
-        lblSelectedTask.Text = selectedTaskName;
+        lblSelectedTask.Text = twTasks.SelectedNode.Text;
     }
 
     protected void btnShowAddTask_Click(object sender, EventArgs e)
     {
         addTaskDiv.Visible = true;
         btnShowAddTask.Enabled = false;
+        removeTaskDiv.Visible = false;
+        btnShowDeleteTask.Enabled = true;
+        lblHelp.Text = string.Empty;
     }
 
     protected void btnAddTask_Click(object sender, EventArgs e)
     {
-        if (Session["LoggedUser"] != null)
+        if(Session["ActiveProject"] != null)
         {
-            if (selectedTaskName != null && selectedTaskName != string.Empty && selectedTaskId != null && selectedTaskId != string.Empty)
-            {
+            if (Session["LoggedUser"] != null)
+            {                
                 if (tbTaskName.Text != null && tbTaskName.Text != string.Empty)
                 {
-
+                    if(cbIsRoot.Checked)
+                    {
+                        int result = Database.AddTask(null, Convert.ToInt32(Session["ActiveProject"]), tbTaskName.Text);
+                        if(result > 0)
+                        {
+                            lblConfirmSave.Text = "Save successful!";
+                        }
+                        else
+                        {
+                            lblConfirmSave.Text = "Save failed!";
+                        }
+                    }
+                    else 
+                    {
+                        if (twTasks.SelectedNode != null)
+                        {
+                            int? taskId = Convert.ToInt32(Session["SelectedTask"]);
+                            int result = Database.AddTask(taskId, Convert.ToInt32(Session["ActiveProject"]), tbTaskName.Text);
+                            if (result > 0)
+                            {
+                                lblConfirmSave.Text = "Save successful!";
+                            }
+                            else
+                            {
+                                lblConfirmSave.Text = "Save failed!";
+                            }
+                        }
+                        else
+                        {
+                            lblHelp.Text = "Select a task as parent or check the 'Create root task' -box!";
+                            lblSelectedTask.Text = string.Empty;
+                        }
+                    }
                 }
                 else
                 {
-                    lblHelp.Text = "Give a task name!";
+                    lblHelp.Text = "Name the new task!";
                     lblSelectedTask.Text = string.Empty;
                 }
-
             }
             else
             {
-                lblHelp.Text = "Select a task!";
+                lblHelp.Text = "Login first!";
                 lblSelectedTask.Text = string.Empty;
             }
         }
         else
         {
-            lblHelp.Text = "Login first!";
+            lblHelp.Text = "Choose a project first!";
             lblSelectedTask.Text = string.Empty;
         }
         
@@ -119,8 +150,8 @@ public partial class TaskEntry : System.Web.UI.Page
         if (Session["LoggedUser"] != null)
         {
             if(Session["ActiveProject"] != null)
-            {
-                if (selectedTaskName != null && selectedTaskName != string.Empty && selectedTaskId != null && selectedTaskId != string.Empty)
+            {                
+                if (twTasks.SelectedNode != null)
                 {
                     if (twTasks.SelectedNode.ChildNodes.Count == 0)
                     {
@@ -159,11 +190,6 @@ public partial class TaskEntry : System.Web.UI.Page
         }        
     }
 
-    protected void btnDeleteTask_Click(object sender, EventArgs e)
-    {
-
-    }
-
     protected void btnCalendarBack_Click(object sender, EventArgs e)
     {
         if (calendar.VisibleDate == DateTime.MinValue)
@@ -181,5 +207,43 @@ public partial class TaskEntry : System.Web.UI.Page
         }
 
         calendar.VisibleDate = calendar.VisibleDate.AddYears(1);
+    }
+
+    protected void btnConfirmDelete_Click(object sender, EventArgs e)
+    {
+        int taskId = Convert.ToInt32(twTasks.SelectedNode.Value);
+        int result = Database.RemoveTask(taskId);
+        lblHelp.Text = result + " rows deleted!";
+        removeTaskDiv.Visible = false;
+        btnShowDeleteTask.Enabled = true;
+    }
+
+    protected void btnCancelDelete_Click(object sender, EventArgs e)
+    {        
+        removeTaskDiv.Visible = false;
+        btnShowDeleteTask.Enabled = true;
+    }
+
+    protected void btnShowDeleteTask_Click(object sender, EventArgs e)
+    {
+        if (twTasks.SelectedNode != null)
+        {
+            if (twTasks.SelectedNode.ChildNodes.Count == 0)
+            {
+                removeTaskDiv.Visible = true;
+                addTaskDiv.Visible = false;
+                btnShowDeleteTask.Enabled = false;
+                btnShowAddTask.Enabled = true;
+                lblHelp.Text = string.Empty;
+            }
+            else
+            {
+                lblHelp.Text = "Can not delete a task with subtasks";
+            }
+        }
+        else
+        {
+            lblHelp.Text = "Select a task to delete!";
+        }
     }
 }
