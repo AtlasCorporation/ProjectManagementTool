@@ -41,12 +41,30 @@
                     <div class="col-sm-offset-2 col-sm-5">
                         <asp:button cssclass="btn btn-success" id="btnSaveChanges" onclick="btnSaveChanges_Click" runat="server" text="Save changes"></asp:button>
                         <asp:button cssclass="btn btn-warning" id="btnCancel" onclick="btnCancel_Click" runat="server" text="Cancel"></asp:button>
-                        <asp:button cssclass="btn btn-danger" id="btnDelete" onclick="btnDelete_Click" runat="server" text="Delete project"></asp:button><br />
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete">Delete project</button>
                         <asp:label cssclass="label label-danger" id="lblMessages" runat="server" Text=""></asp:label><br /><br />
                     </div>                 
                 </div>
             </div>
         </div>
     </div>
-</asp:Content>
 
+<!-- Confirm delete modal -->
+<div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="confirmDeleteLabel">Delete project</h4>
+      </div>
+      <div class="modal-body">
+      Are you sure you want to delete this project?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <asp:button cssclass="btn btn-danger" id="btnDelete" onclick="btnDelete_Click" runat="server" text="Delete"></asp:button><br />
+      </div>
+    </div>
+  </div>
+</div>
+</asp:Content>
