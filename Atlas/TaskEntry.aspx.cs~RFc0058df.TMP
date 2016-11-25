@@ -1,0 +1,150 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class TaskEntry : System.Web.UI.Page
+{
+    protected string selectedTaskName;
+    protected string selectedTaskId;
+    protected DateTime selectedDate;
+    protected int userId;
+    List<string> hours;
+    List<string> minutes;
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            InitControls();
+            if (Session["ActiveProject"] != null)
+            {
+                
+            }
+        }
+        if(Session["LoggedUser"] != null)
+        {
+            userId = Convert.ToInt32(Session["LoggedUser"]);
+        }
+    }
+
+    protected void InitControls()
+    {
+        // anna funktiolle projektin id
+        List<TaskNode> nodes = SiteLogic.GetTaskNodes(1);
+
+        foreach (TaskNode node in nodes)
+        {
+            twTasks.Nodes.Add(node);
+        }
+        twTasks.CollapseAll();
+        hours = new List<string>();
+        for(int i = 0;i<24;i++)
+        {
+            if(i<10)
+            {
+                hours.Add("0" + i);
+            }
+            else
+            {
+                hours.Add("" + (i + 1));
+            }
+            
+        }
+        minutes = new List<string>();
+        for(int i = 0;i<60;i++)
+        {
+            if (i < 10)
+            {
+                minutes.Add("0" + i);
+            }
+            else
+            {
+                minutes.Add("" + i);
+            }
+        }
+        ddlHours.DataSource = hours;
+        ddlHours.DataBind();
+        ddlHours.SelectedIndex = 7;
+        ddlMinutes.DataSource = minutes;
+        ddlMinutes.DataBind();
+        
+        
+
+    }
+
+    protected void twTasks_SelectedNodeChanged(object sender, EventArgs e)
+    {
+        selectedTaskName = twTasks.SelectedNode.Text;
+        selectedTaskId = twTasks.SelectedValue;
+        lblHelp.Text = "Selected task:";
+        lblSelectedTask.Text = selectedTaskName;
+    }
+
+    protected void btnShowAddTask_Click(object sender, EventArgs e)
+    {
+        addTaskDiv.Visible = true;
+        btnShowAddTask.Enabled = false;
+    }
+
+    protected void btnAddTask_Click(object sender, EventArgs e)
+    {
+        if (selectedTaskName != null && selectedTaskName != string.Empty && selectedTaskId != null && selectedTaskId != string.Empty)
+        {
+
+        }
+    }
+
+    protected void btnCancelAddTask_Click(object sender, EventArgs e)
+    {
+        btnShowAddTask.Enabled = true;
+        addTaskDiv.Visible = false;
+    }
+
+    protected void btnLogHours_Click(object sender, EventArgs e)
+    {
+        if (selectedTaskName != null && selectedTaskName != string.Empty && selectedTaskId != null && selectedTaskId != string.Empty)
+        {
+            if(Session["LoggedUser"] != null)
+            {
+                int workingHours = Convert.ToInt32(ddlHours.Text);
+                //Database.AddDonetask(selectedTaskId, userId, workingHours, );
+            }
+            else
+            {
+                lblHelp.Text = "Login first!";
+                lblSelectedTask.Text = string.Empty;
+            }
+        }
+        else
+        {
+            lblHelp.Text = "Select a task!";
+            lblSelectedTask.Text = string.Empty;
+        }
+    }
+
+    protected void btnDeleteTask_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void btnCalendarBack_Click(object sender, EventArgs e)
+    {
+        if (calendar.VisibleDate == DateTime.MinValue)
+        {
+            calendar.VisibleDate = DateTime.Now;
+        }
+        calendar.VisibleDate = calendar.VisibleDate.AddYears(-1);
+    }
+
+    protected void btnCalendarForward_Click(object sender, EventArgs e)
+    {
+        if (calendar.VisibleDate == DateTime.MinValue)
+        {
+            calendar.VisibleDate = DateTime.Now;
+        }
+
+        calendar.VisibleDate = calendar.VisibleDate.AddYears(1);
+    }
+}

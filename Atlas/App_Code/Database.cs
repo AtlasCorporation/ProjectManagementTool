@@ -410,4 +410,22 @@ public class Database
 
 
     #endregion
+
+    #region WorkLog
+
+    public static int AddDonetask(int taskId, int userId, int workTime, DateTime time)
+    {
+        using (atlasEntities db = new atlasEntities())
+        {
+            donetask dt = new donetask();
+            dt.task_id = taskId;
+            dt.user_id = userId;
+            dt.worktime = workTime;
+            dt.date = time;
+            int result = db.SaveChanges();
+            return result;
+        }
+    }
+
+    #endregion
 }

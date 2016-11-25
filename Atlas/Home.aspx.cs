@@ -49,7 +49,7 @@ public partial class Home : System.Web.UI.Page
     protected void InitUserPieChart()
     {
         // TODO: tarvitaan projektin ja userin ID sessionista.
-        var data = Database.GetProjectWorkingHoursForUser(1, 7);
+        var data = Database.GetProjectWorkingHoursForUser(Convert.ToInt32(Session["ActiveProject"]), 7);
 
         ChartArea chartArea = new ChartArea("ChartArea");
         userPieChart.ChartAreas.Add(chartArea);
@@ -73,7 +73,7 @@ public partial class Home : System.Web.UI.Page
     protected void InitMainPieChart()
     {
         // TODO: tarvitaan projektin id sessionista
-        var data = Database.GetProjectWorkingHours(1);
+        var data = Database.GetProjectWorkingHours(Convert.ToInt32(Session["ActiveProject"]));
 
         ChartArea chartArea = new ChartArea("ChartArea");
         usersPieChart.ChartAreas.Add(chartArea);

@@ -7,6 +7,7 @@
     <title></title>
     <asp:ContentPlaceHolder id="head" runat="server">
     </asp:ContentPlaceHolder>
+    <link href="http://www.w3schools.com/lib/w3.css" rel="stylesheet" />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/sidebar.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -71,7 +72,7 @@
             <li class="active"><a href="Gantt.aspx"><span class="glyphicon glyphicon-align-left"></span> Gantt chart</a></li>
             <li class="active"><a href="Documentation.aspx"><span class="glyphicon glyphicon-book"></span> Documentation</a></li>
             <li class="active"><a href="Settings.aspx"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
-
+            <li class="active"><a href="TaskEntry.aspx"><span class="glyphicon glyphicon-floppy-disk"></span> Log your work</a></li>
             <li class="active"><a href="Login.aspx"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
             <li class="active"><a href="CreateUser.aspx"><span class="glyphicon glyphicon-log-in"></span> Register</a></li>
 
