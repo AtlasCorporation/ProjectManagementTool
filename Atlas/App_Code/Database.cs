@@ -7,6 +7,7 @@ using System.Web;
 public class Database
 {
     static atlasEntities ctx = new atlasEntities();
+    public static task previouslyCreatedTask;
     public Database(){}
     #region PROJECTS
     /// <summary>
@@ -374,6 +375,29 @@ public class Database
         }
     }
 
+    public static IEnumerable<donetask> GetDonetasks(int taskId)
+    {
+        using (atlasEntities db = new atlasEntities())
+        {
+            var donetasks = (from c in db.donetasks
+                            where c.task_id == taskId
+                            select c).ToList();
+            return donetasks;
+        }
+    }
+
+    public static IEnumerable<task> GetMajorTasks(int projectId)
+    {
+        using (atlasEntities db = new atlasEntities())
+        {
+            var rootTasks = from c in db.tasks
+                            where c.task_id == null && c.project_id == projectId
+                            select c;
+
+            return rootTasks;
+        }
+    }
+
 
     public static List<Task> GetTasks(int projectID)
     {
@@ -393,7 +417,7 @@ public class Database
         int i = 1;
         foreach (var dtask in donetasks)
         {
-            tempTask = new Task(dtask.TaskID, dtask.Name + " - " + dtask.Worker, dtask.Date.Value.Day + "-" + dtask.Date.Value.Month + "-" + dtask.Date.Value.Year, dtask.WorkTime, dtask.Parent, i);
+            tempTask = new Task(dtask.TaskID, dtask.Name, dtask.Date.Value.Day + "-" + dtask.Date.Value.Month + "-" + dtask.Date.Value.Year, dtask.WorkTime, dtask.Parent, i);
             Tasks.Add(tempTask);
             i++;
         }
@@ -449,6 +473,7 @@ public class Database
                 t.project_id = projectId;
                 t.name = taskName;
                 db.tasks.Add(t);
+                previouslyCreatedTask = t;
                 int result = db.SaveChanges();
                 return result;
             }

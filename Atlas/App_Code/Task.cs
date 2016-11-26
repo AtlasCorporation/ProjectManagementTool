@@ -64,6 +64,22 @@ public class Task
         this.text = name;
     }
 
+    public Task(int id, string name, int? parent)
+    {
+        this.id = id;
+        this.text = name;
+        this.Parent = parent;
+    }
+
+    public Task(int id, string name, string StartingDateTime, int WorkTime, int? parent)
+    {
+        this.id = id;
+        this.text = name;
+        this.startDate = StartingDateTime;
+        this.duration = WorkTime;
+        this.Parent = parent;
+    }
+
     public Task(int id, string name, string StartingDateTime, int WorkTime, int? parent, int ganttId)
     {
         this.id = id;

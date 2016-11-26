@@ -15,6 +15,7 @@
                 gantt.config.duration_unit = "hour";
                 gantt.config.duration_step = 1;
                 gantt.config.readonly = true;
+                gantt.config.skip_off_time = true;
                 gantt.init("ganttDiv");
                 gantt.parse(<%= GetJsonData() %>);
             </script>

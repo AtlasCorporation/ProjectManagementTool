@@ -24,10 +24,8 @@ public partial class Gantt : System.Web.UI.Page
     {
         if (Session["ActiveProject"] != null)
         {
-            return SiteLogic.GetTasksInJson(Convert.ToInt32(Session["ActiveProject"]));
+            return SiteLogic.GetTasksJson(Convert.ToInt32(Session["ActiveProject"]));
         }
         else return "";
-        
-        
     }
 }
