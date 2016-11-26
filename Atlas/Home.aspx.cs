@@ -55,18 +55,21 @@ public partial class Home : System.Web.UI.Page
         userPieChart.ChartAreas.Add(chartArea);
         userPieChart.ChartAreas["ChartArea"].Area3DStyle.Enable3D = true;
         userPieChart.Series.Clear();
-        //userPieChart.Palette = ChartColorPalette.Pastel;
+        //userPieChart.Palette = ChartColorPalette.Chocolate;
         userPieChart.Titles.Add("Hours spent on project by " + Session["LoggedUser"]);
         userPieChart.Series.Add("WorkHours");
         userPieChart.Series["WorkHours"].ChartType = SeriesChartType.Pie;
         DataPoint point;
-
+        
         foreach (Task item in data)
         {
             point = new DataPoint(0, item.Duration);
-            point.AxisLabel = item.Text;
-            point.LegendText = item.Duration.ToString();
+            //point.AxisLabel = item.Text;
+            point.IsValueShownAsLabel = true;
+            point.IsVisibleInLegend = true;
+            point.LegendText = item.Text;
             userPieChart.Series["WorkHours"].Points.Add(point);
+            userPieChart.Legends.Add(new Legend(item.Text));
         }
     }
 
@@ -87,9 +90,12 @@ public partial class Home : System.Web.UI.Page
         foreach (Task item in data)
         {
             point = new DataPoint(0, item.Duration);
-            point.AxisLabel = item.Text;
-            //point.LegendText = item.Name;
+            //point.AxisLabel = item.Text;
+            point.IsValueShownAsLabel = true;
+            point.IsVisibleInLegend = true;
+            point.LegendText = item.Text;
             usersPieChart.Series["WorkHours"].Points.Add(point);
+            usersPieChart.Legends.Add(new Legend(item.Text));
         }
     }
 

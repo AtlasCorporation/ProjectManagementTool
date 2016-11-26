@@ -70,9 +70,9 @@
 
             <li class="active"><a href="Home.aspx"><span class="glyphicon glyphicon-home"></span> Home</a></li>
             <li class="active"><a href="Gantt.aspx"><span class="glyphicon glyphicon-align-left"></span> Gantt chart</a></li>
+            <li class="active"><a href="TaskEntry.aspx"><span class="glyphicon glyphicon-floppy-disk"></span> Manage work</a></li>
             <li class="active"><a href="Documentation.aspx"><span class="glyphicon glyphicon-book"></span> Documentation</a></li>
             <li class="active"><a href="Settings.aspx"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
-            <li class="active"><a href="TaskEntry.aspx"><span class="glyphicon glyphicon-floppy-disk"></span> Manage work</a></li>
             <li class="active"><a href="Login.aspx" id="aLogin" runat="server"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
         </ul>
     </div>
