@@ -33,6 +33,7 @@ public partial class TaskEntry : System.Web.UI.Page
     protected void InitControls()
     {
         // anna funktiolle projektin id
+        //InitTaskTree();
         BuildTaskTree();
         twTasks.CollapseAll();
 
@@ -104,7 +105,6 @@ public partial class TaskEntry : System.Web.UI.Page
         btnShowAddTask.Enabled = false;
         removeTaskDiv.Visible = false;
         btnShowDeleteTask.Enabled = true;
-        lblHelp.Text = string.Empty;
     }
 
     protected void btnVirginTask_Click(object sender, EventArgs e)
@@ -119,8 +119,7 @@ public partial class TaskEntry : System.Web.UI.Page
                     if (result > 0)
                     {
                         lblHelp.Text = "Save successful!";
-                        virginDiv.Visible = false;
-                        taskControlDiv.Visible = true;
+                        ResetContent();
                         twTasks.Nodes.Clear();
                         BuildTaskTree();
                     }
@@ -144,6 +143,17 @@ public partial class TaskEntry : System.Web.UI.Page
         }
     }
 
+    protected void ResetContent()
+    {
+        addTaskDiv.Visible = false;
+        removeTaskDiv.Visible = false;
+        virginDiv.Visible = false;
+        btnShowAddTask.Enabled = true;
+        btnShowDeleteTask.Enabled = true;
+        tbTaskName.Text = string.Empty;
+        tbVirginTask.Text = string.Empty;
+    }
+
     protected void btnAddTask_Click(object sender, EventArgs e)
     {       
 
@@ -160,7 +170,7 @@ public partial class TaskEntry : System.Web.UI.Page
                         if(result > 0)
                         {
                             lblHelp.Text = "Save successful!";
-                            addTaskDiv.Visible = false;
+                            ResetContent();
                             twTasks.Nodes.Clear();
                             BuildTaskTree();
                         }
@@ -178,7 +188,7 @@ public partial class TaskEntry : System.Web.UI.Page
                             if (result > 0)
                             {
                                 lblHelp.Text = "Save successful!";
-                                addTaskDiv.Visible = false;
+                                ResetContent();
                                 twTasks.Nodes.Clear();
                                 BuildTaskTree();
                             }
@@ -217,8 +227,7 @@ public partial class TaskEntry : System.Web.UI.Page
 
     protected void btnCancelAddTask_Click(object sender, EventArgs e)
     {
-        btnShowAddTask.Enabled = true;
-        addTaskDiv.Visible = false;
+        ResetContent();
     }
 
     protected void btnLogHours_Click(object sender, EventArgs e)
@@ -290,16 +299,14 @@ public partial class TaskEntry : System.Web.UI.Page
         int taskId = Convert.ToInt32(twTasks.SelectedNode.Value);
         int result = Database.RemoveTask(taskId);
         lblHelp.Text = result + " rows deleted!";
+        ResetContent();
         twTasks.Nodes.Clear();
         BuildTaskTree();
-        removeTaskDiv.Visible = false;
-        btnShowDeleteTask.Enabled = true;
     }
 
     protected void btnCancelDelete_Click(object sender, EventArgs e)
-    {        
-        removeTaskDiv.Visible = false;
-        btnShowDeleteTask.Enabled = true;
+    {
+        ResetContent();
     }
 
     protected void btnShowDeleteTask_Click(object sender, EventArgs e)
@@ -312,7 +319,6 @@ public partial class TaskEntry : System.Web.UI.Page
                 addTaskDiv.Visible = false;
                 btnShowDeleteTask.Enabled = false;
                 btnShowAddTask.Enabled = true;
-                lblHelp.Text = string.Empty;
             }
             else
             {

@@ -1,11 +1,24 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="TaskEntry.aspx.cs" Inherits="TaskEntry" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <style>
+        .calendar {
+            display: block; 
+            width: 200px;
+            margin: 0 auto;
+        }
+    </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">    
     <div>
-        <div class="w3-half w3-content w3-center w3-container">
-            <div runat="server" id="virginDiv" visible="false" class="w3-container">                
+        <div class="w3-content w3-topbar w3-padding-tiny">
+            <div class="w3-center">
+                <asp:Label runat="server" Text="Selected task:" />
+                <asp:Label runat="server" ID="lblSelectedTask" Text="None selected" />
+            </div>
+        </div>    
+        <div class="w3-content w3-center w3-padding-medium w3-twothird">
+            <div runat="server" id="virginDiv" visible="false" class="w3-padding">                
                 <asp:Label runat="server" Text="Create a new task" />   
                 <div class="w3-content form-horizontal">
                     <div class="form-group">
@@ -16,12 +29,9 @@
                 <asp:Button cssclass="btn btn-success" runat="server" Text="Add task" ID="btnVirginTask" OnClick="btnVirginTask_Click" />
             </div>
             <div runat="server" id="taskControlDiv" class="w3-container">
-                <div class="w3-content">
-                    <asp:Label runat="server" Text="Selected task:" />
-                    <asp:Label runat="server" ID="lblSelectedTask" Text="None selected" />
-                </div>    
-             
-                <asp:TreeView runat="server" ID="twTasks"  OnSelectedNodeChanged="twTasks_SelectedNodeChanged"/>
+                <div>
+                    <asp:TreeView runat="server" ID="twTasks" OnSelectedNodeChanged="twTasks_SelectedNodeChanged"/>
+                </div>                
                 <asp:Button cssclass="btn btn-success" runat="server" Text="Add task" ID="btnShowAddTask" OnClick="btnShowAddTask_Click" />
                 <asp:Button cssclass="btn btn-danger" runat="server" Text="Delete task" ID="btnShowDeleteTask" OnClick="btnShowDeleteTask_Click" />
             
@@ -45,11 +55,9 @@
                 </div>
             </div>
         </div>   
-        <div class="w3-half w3-content w3-center w3-container">
+        <div class="w3-third w3-content w3-center w3-padding-medium">
             <div class="w3-container">
-                <div class="w3-content">
-                    <asp:Calendar runat="server" ID="calendar" /> 
-                </div>       
+                <asp:Calendar runat="server" ID="calendar" CssClass="calendar" />                 
                 <div class="w3-content">
                     <asp:Button cssclass="btn" runat="server" ID="btnCalendarBack" Text="< Year" OnClick="btnCalendarBack_Click" />
                     <asp:Button cssclass="btn" runat="server" ID="btnCalendarForward" Text="Year >"  OnClick="btnCalendarForward_Click"/>    
