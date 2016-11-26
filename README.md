@@ -13,3 +13,4 @@
 * 24.11 - 6h Tuntikirjaus-sivun rakennus
 * 25.11 - 3h Taskien lisäämis/poistamis -toiminnallisuus
 * 26.11 - 6h Taskien hallinnointisivun UI:n muokkaus ja virheentarkistukset
+* 26.11 - 6h Gantt-chartin uudelleenkonfigurointia ja bugienkorjausta
