@@ -5,7 +5,13 @@
     <link href="Content/dhtmlxgantt/dhtmlxgantt_broadway.css" rel="stylesheet" />
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
-    <div id="ganttDiv"  style='width:100%; min-height:400px;'>
+    <div runat="server" id="reminderDiv" class="w3-center" visible="false">
+        <div class="w3-padding-128">
+            <asp:Label runat="server" ID="lblReminder" Text="Select a project to show the GANTT-chart!" />
+        </div>
+    </div> 
+    <div runat="server" id="mainDiv" visible="true">
+        <div id="ganttDiv"  style='width:100%; min-height:400px;'>
             <script type="text/javascript">    
                // gantt.config.subscales = [{ unit: "hour", step: 12, date: "%H:%i" }];
                 gantt.config.duration_unit = "hour";
@@ -18,5 +24,6 @@
                 <asp:Label runat="server" ID="lblFooter" />
             </p>        
         </div>
+    </div>
 </asp:Content>
 

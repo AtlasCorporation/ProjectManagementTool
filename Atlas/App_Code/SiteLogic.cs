@@ -38,12 +38,10 @@ public class SiteLogic
             {
                 tasksJson += ",";
             }
-            else
-            {
-                tasksJson += "]}";
-            }
         }
-
+        
+        tasksJson += "]}";
+        
         return tasksJson;
     }
 
@@ -57,8 +55,6 @@ public class SiteLogic
         TaskNode tempNode;
         bool added;
 
-        System.Diagnostics.Debug.WriteLine("Before removing roots:" + tasks.Count);
-
         // get rootnodes from tasks
         for (int i = 0; i < tasks.Count; i++)
         {
@@ -70,8 +66,6 @@ public class SiteLogic
                 i--;
             }
         }
-
-        System.Diagnostics.Debug.WriteLine("After removing roots:" + tasks.Count);
 
         // arrange rest of the list into nodetrees
         while (tasks.Count > 0)

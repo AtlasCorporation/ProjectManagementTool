@@ -237,6 +237,7 @@ public class Database
         return tasks;
     }
 
+    // HUOM EI HAE ITSE ROOT-TASKIIN TALLENNETTUJA TYÖTUNTEJA. Tunteja ei tule tallentaa root-taskeihin.
     public static List<Task> GetProjectWorkingHours(int projectID)
     {
         using (var db = new atlasEntities())
@@ -274,6 +275,7 @@ public class Database
         }
     }
 
+    // HUOM EI HAE ITSE ROOT-TASKIIN TALLENNETTUJA TYÖTUNTEJA. Tunteja ei tule tallentaa root-taskeihin.
     public static List<Task> GetProjectWorkingHoursForUser(int projectID, int userID)
     {
         try

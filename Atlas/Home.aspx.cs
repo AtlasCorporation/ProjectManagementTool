@@ -48,14 +48,14 @@ public partial class Home : System.Web.UI.Page
 
     protected void InitUserPieChart()
     {
-        // TODO: tarvitaan projektin ja userin ID sessionista.
+        // TODO: tarvitaan userin ID sessionista.
         var data = Database.GetProjectWorkingHoursForUser(Convert.ToInt32(Session["ActiveProject"]), 7);
 
         ChartArea chartArea = new ChartArea("ChartArea");
         userPieChart.ChartAreas.Add(chartArea);
         userPieChart.ChartAreas["ChartArea"].Area3DStyle.Enable3D = true;
         userPieChart.Series.Clear();
-        //pieChart.Palette = ChartColorPalette.EarthTones;
+        //userPieChart.Palette = ChartColorPalette.Pastel;
         userPieChart.Titles.Add("Hours spent on project by " + Session["LoggedUser"]);
         userPieChart.Series.Add("WorkHours");
         userPieChart.Series["WorkHours"].ChartType = SeriesChartType.Pie;
@@ -65,21 +65,20 @@ public partial class Home : System.Web.UI.Page
         {
             point = new DataPoint(0, item.Duration);
             point.AxisLabel = item.Text;
-            //point.LegendText = item.Name;
+            point.LegendText = item.Duration.ToString();
             userPieChart.Series["WorkHours"].Points.Add(point);
         }
     }
 
     protected void InitMainPieChart()
     {
-        // TODO: tarvitaan projektin id sessionista
         var data = Database.GetProjectWorkingHours(Convert.ToInt32(Session["ActiveProject"]));
 
         ChartArea chartArea = new ChartArea("ChartArea");
         usersPieChart.ChartAreas.Add(chartArea);
         usersPieChart.ChartAreas["ChartArea"].Area3DStyle.Enable3D = true;
         usersPieChart.Series.Clear();
-        //pieChart.Palette = ChartColorPalette.EarthTones;
+        //usersPieChart.Palette = ChartColorPalette.Pastel;
         usersPieChart.Titles.Add("Total hours spent on project");
         usersPieChart.Series.Add("WorkHours");
         usersPieChart.Series["WorkHours"].ChartType = SeriesChartType.Pie;

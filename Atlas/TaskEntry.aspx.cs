@@ -14,19 +14,29 @@ public partial class TaskEntry : System.Web.UI.Page
     
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
+        if(Session["LoggedUser"] != null && Session["ActiveProject"] != null)
         {
-            InitControls();
-        }
-        
-        if(twTasks.SelectedNode != null)
-        {
-            lblSelectedTask.Text = twTasks.SelectedNode.Text;
-        }
+            mainDiv.Visible = true;
+            reminderDiv.Visible = false;
 
-        if(Session["LoggedUser"] != null)
-        {
+            if (!IsPostBack)
+            {
+                InitControls();
+            }
+
+            if (twTasks.SelectedNode != null)
+            {
+                lblSelectedTask.Text = twTasks.SelectedNode.Text;
+            }
+
+            
             //userId = Convert.ToInt32(Session["LoggedUser"]);
+            
+        }
+        else
+        {
+            mainDiv.Visible = false;
+            reminderDiv.Visible = true;
         }
     }
 
@@ -97,6 +107,7 @@ public partial class TaskEntry : System.Web.UI.Page
     protected void twTasks_SelectedNodeChanged(object sender, EventArgs e)
     {
         lblSelectedTask.Text = twTasks.SelectedNode.Text;
+        lblParent.Text = twTasks.SelectedNode.Text;
     }
 
     protected void btnShowAddTask_Click(object sender, EventArgs e)
@@ -240,15 +251,22 @@ public partial class TaskEntry : System.Web.UI.Page
                 {
                     if (twTasks.SelectedNode.ChildNodes.Count == 0)
                     {
-                        int workingHours = Convert.ToInt32(ddlWorkTime.Text);
-                        DateTime dateTime = new DateTime(calendar.SelectedDate.Year, calendar.SelectedDate.Month, calendar.SelectedDate.Day, Convert.ToInt32(ddlHours.Text), Convert.ToInt32(ddlMinutes.Text), 0);
-
-                       /* int result = Database.AddDonetask(Convert.ToInt32(twTasks.SelectedNode.Value), Session["LoggedUser"], workingHours, dateTime);
-                        if (result != 0)
+                        if(twTasks.SelectedNode.Parent != null)
                         {
-                            lblConfirmSave.Text = "Saved! Task: " + twTasks.SelectedNode.Text + ", user: " + Session["LoggedUser"] + ", hours: " + ddlWorkTime.Text + ", started at: " + dateTime;
+                            int workingHours = Convert.ToInt32(ddlWorkTime.Text);
+                            DateTime dateTime = new DateTime(calendar.SelectedDate.Year, calendar.SelectedDate.Month, calendar.SelectedDate.Day, Convert.ToInt32(ddlHours.Text), Convert.ToInt32(ddlMinutes.Text), 0);
+
+                            int result = Database.AddDonetask(Convert.ToInt32(twTasks.SelectedNode.Value), 7, workingHours, dateTime);
+                            if (result != 0)
+                            {
+                                lblConfirmSave.Text = "Saved! Task: " + twTasks.SelectedNode.Text + ", user: " + Session["LoggedUser"] + ", hours: " + ddlWorkTime.Text + ", started at: " + dateTime;
+                            }
+                            else lblConfirmSave.Text = "Tallennus epäonnistui!";
                         }
-                        else lblConfirmSave.Text = "Tallennus epäonnistui!";*/
+                        else
+                        {
+                            lblHelp.Text = "Cannot add hours to root-task!";
+                        }
                     }
                     else
                     {
@@ -328,6 +346,18 @@ public partial class TaskEntry : System.Web.UI.Page
         else
         {
             lblHelp.Text = "Select a task to delete!";
+        }
+    }
+
+    protected void cbIsRoot_CheckedChanged(object sender, EventArgs e)
+    {
+        if(cbIsRoot.Checked)
+        {
+            parentSelectionDiv.Visible = false;
+        }
+        else
+        {
+            parentSelectionDiv.Visible = true;
         }
     }
 }
