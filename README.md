@@ -9,5 +9,5 @@ Tunnit:
 * 18.11 - 6,5h Projektien muokkaus ja poistaminen, private/public projektit
 * 23.11 - 1h Commit feedin aloitus
 * 23.11 - 3h Merge ja suunnittelu
-* 24.11 - 2h Projoktien lisäys/listaus kirjautuneelle käyttäjälle
+* 24.11 - 2h Projektien lisäys/listaus kirjautuneelle käyttäjälle
 * 25.11 - 3,5h Ulkoasun parannuksia, commit feedi
