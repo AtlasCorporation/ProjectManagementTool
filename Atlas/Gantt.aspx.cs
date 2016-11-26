@@ -22,9 +22,6 @@ public partial class Gantt : System.Web.UI.Page
     }
     public string GetJsonData()
     {
-        // tarvitsee projektin id:n
-        // Session["ActiveProject"] ei ole vielä int vaan object. tarvitaan int.
-
         if (Session["ActiveProject"] != null)
         {
             return SiteLogic.GetTasksInJson(Convert.ToInt32(Session["ActiveProject"]));

@@ -23,7 +23,7 @@ public partial class Home : System.Web.UI.Page
 
                 // Pie chartit
                 InitMainPieChart();
-                if (Session["LoggedUser"] != null)
+                if (Session["LoggedUserId"] != null)
                 {
                     InitUserPieChart();
                 }
@@ -49,7 +49,7 @@ public partial class Home : System.Web.UI.Page
     protected void InitUserPieChart()
     {
         // TODO: tarvitaan userin ID sessionista.
-        var data = Database.GetProjectWorkingHoursForUser(Convert.ToInt32(Session["ActiveProject"]), 7);
+        var data = Database.GetProjectWorkingHoursForUser(Convert.ToInt32(Session["ActiveProject"]), Convert.ToInt32(Session["LoggedUserId"]));
 
         ChartArea chartArea = new ChartArea("ChartArea");
         userPieChart.ChartAreas.Add(chartArea);

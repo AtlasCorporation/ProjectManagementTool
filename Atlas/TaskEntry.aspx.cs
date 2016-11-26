@@ -27,11 +27,7 @@ public partial class TaskEntry : System.Web.UI.Page
             if (twTasks.SelectedNode != null)
             {
                 lblSelectedTask.Text = twTasks.SelectedNode.Text;
-            }
-
-            
-            //userId = Convert.ToInt32(Session["LoggedUser"]);
-            
+            }            
         }
         else
         {
@@ -42,8 +38,6 @@ public partial class TaskEntry : System.Web.UI.Page
 
     protected void InitControls()
     {
-        // anna funktiolle projektin id
-        //InitTaskTree();
         BuildTaskTree();
         twTasks.CollapseAll();
 
@@ -256,7 +250,7 @@ public partial class TaskEntry : System.Web.UI.Page
                             int workingHours = Convert.ToInt32(ddlWorkTime.Text);
                             DateTime dateTime = new DateTime(calendar.SelectedDate.Year, calendar.SelectedDate.Month, calendar.SelectedDate.Day, Convert.ToInt32(ddlHours.Text), Convert.ToInt32(ddlMinutes.Text), 0);
 
-                            int result = Database.AddDonetask(Convert.ToInt32(twTasks.SelectedNode.Value), 7, workingHours, dateTime);
+                            int result = Database.AddDonetask(Convert.ToInt32(twTasks.SelectedNode.Value), Convert.ToInt32(Session["LoggedUserId"]), workingHours, dateTime);
                             if (result != 0)
                             {
                                 lblConfirmSave.Text = "Saved! Task: " + twTasks.SelectedNode.Text + ", user: " + Session["LoggedUser"] + ", hours: " + ddlWorkTime.Text + ", started at: " + dateTime;

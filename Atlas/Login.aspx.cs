@@ -33,10 +33,11 @@ public partial class Login : System.Web.UI.Page
     {
         string ConnString = ConfigurationManager.ConnectionStrings["Mysli2"].ConnectionString;
         string username = usernamelogin.Text;
-        string select = string.Format("Select password, salt from user where username=@username");
+        string select = string.Format("Select id, password, salt from user where username=@username");
         DataTable dt = new DataTable();
         string checkSALT = "";
         string checkPW = "";
+        int userId = 0;
         //Select with parameter
         string usernameRegex = @"^[A-Za-z0-9]+$";
         if (Regex.IsMatch(usernamelogin.Text, usernameRegex))
@@ -55,6 +56,7 @@ public partial class Login : System.Web.UI.Page
                 da.Dispose();
                 checkPW = Convert.ToString(dt.Rows[0]["password"]);
                 checkSALT = Convert.ToString(dt.Rows[0]["salt"]);
+                userId = Convert.ToInt32(dt.Rows[0]["id"]);
             }
             catch (Exception ex)
             {
@@ -71,6 +73,7 @@ public partial class Login : System.Web.UI.Page
             if (Convert.ToBase64String(hashed_byte_array) == checkPW)
             {
                 Session["LoggedUser"] = usernamelogin.Text;
+                Session["LoggedUserId"] = userId;
                 lblMessages.Text = "Login success";
                 Response.Redirect("Home.aspx");
             }
