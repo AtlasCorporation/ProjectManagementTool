@@ -37,6 +37,7 @@
         .commit-feed .feed-item .text {
           position: relative;
           top: -3px;
+          margin-left: 8px;
         }
     </style>
 </asp:Content>

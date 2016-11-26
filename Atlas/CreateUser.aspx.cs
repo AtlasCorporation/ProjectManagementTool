@@ -12,14 +12,6 @@ using System.Web.UI.WebControls;
 
 public partial class CreateUser : System.Web.UI.Page
 {
-    pwMixer mixer = new pwMixer();
-    private string salt;
-    private string pw;
-    private string hashedPassword;
-    private string pwCheck;
-    private byte[] pw_bytes;
-    private string usernameParam;
-
     protected void Page_Load(object sender, EventArgs e)
     {
 
@@ -27,69 +19,81 @@ public partial class CreateUser : System.Web.UI.Page
 
     protected void createAcc_Click(object sender, EventArgs e)
     {
-        string usernameRegex = @"^[A-Za-z0-9]+$";
-        if (Regex.IsMatch(username.Text, usernameRegex) && password.Text == repassword.Text)
+        if (createUser(username.Text, password.Text, repassword.Text))
         {
-            salt = mixer.CreateSalt();
-            pw = username.Text + salt + password.Text;
-            pw_bytes = ASCIIEncoding.ASCII.GetBytes(pw);
-            SHA512Managed sha512 = new SHA512Managed();
-            usernameParam = username.Text;
+            Response.Redirect("Login.aspx?success=true");
+        }
+    }
 
-            var hashed_byte_array = sha512.ComputeHash(pw_bytes);
-            hashedPassword = Convert.ToBase64String(hashed_byte_array);
-
-            //Username EXISTS tsekkaus
+    private bool createUser(string username, string password, string repassword)
+    {
+        string usernameRegex = @"^[A-Za-z0-9]+$";
+        // Check that username has no special characters and passwords match
+        if (Regex.IsMatch(username, usernameRegex) && password == repassword)
+        {
+            // Check if username exists already
             string ConnString = ConfigurationManager.ConnectionStrings["Mysli2"].ConnectionString;
             string query = "select * from user where username=@username";
             try
             {
                 MySqlConnection conn = new MySqlConnection(ConnString);
-                conn.Open();
                 MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@username", usernameParam);
+                cmd.Parameters.AddWithValue("@username", username);
+                conn.Open();
                 MySqlDataReader MyReader = cmd.ExecuteReader();
                 if (MyReader.HasRows)
                 {
+                    conn.Close();
                     lblMessages.Text = "Username exists already!";
-                }// END OF USERNAME EXISTS
-                else //Create new user if username is not taken and passwords match
-                {
-                    createUser();
-                    Response.Redirect("Login.aspx?success=true");
                 }
-                conn.Close();
+                else // Create new user if username is not taken
+                {
+                    conn.Close();
+                    return AddUserToDB(username, password);
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                lblMessages.Text = ex.Message;
             }
         }
         else
         {
-            lblMessages.Text = "Passwords doesn't match or username includes special characters.";
+            lblMessages.Text = "Passwords do not match or username includes special characters.";
         }
-
+        return false;
     }
-    private void createUser()
+
+    private bool AddUserToDB(string username, string password)
     {
+        // Hash password and salt it
+        string salt = pwMixer.CreateSalt();
+        string pw = username + salt + password;
+        byte[] pw_bytes = ASCIIEncoding.ASCII.GetBytes(pw);
+        SHA512Managed sha512 = new SHA512Managed();
+
+        var hashed_byte_array = sha512.ComputeHash(pw_bytes);
+        string hashedPassword = Convert.ToBase64String(hashed_byte_array);
+
+        // Add new user to DB
         string ConnString = ConfigurationManager.ConnectionStrings["Mysli2"].ConnectionString;
         string insert = "Insert into user(username, password, salt) values(@username,@hashedPassword,@salt)";
         try
         {
             MySqlConnection conn = new MySqlConnection(ConnString);
-            MySqlCommand MyCommand = new MySqlCommand(insert, conn);
-            MyCommand.Parameters.AddWithValue("@username", usernameParam);
-            MyCommand.Parameters.AddWithValue("@hashedPassword", hashedPassword);
-            MyCommand.Parameters.AddWithValue("@salt", salt);
-            MySqlDataReader MyReader;
+            MySqlCommand cmd = new MySqlCommand(insert, conn);
+            cmd.Parameters.AddWithValue("@username", username);
+            cmd.Parameters.AddWithValue("@hashedPassword", hashedPassword);
+            cmd.Parameters.AddWithValue("@salt", salt);
             conn.Open();
-            MyReader = MyCommand.ExecuteReader();
+            int rows = cmd.ExecuteNonQuery();
             conn.Close();
+            if (rows > 0)
+                return true; // Added successfully
         }
         catch (Exception ex)
         {
-            lblMessages.Text = "Can't create user!";
+            lblMessages.Text = ex.Message;
         }
+        return false;
     }
 }

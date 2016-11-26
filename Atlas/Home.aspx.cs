@@ -124,7 +124,7 @@ public partial class Home : System.Web.UI.Page
             {
                 foreach (GitHubCommit c in commits)
                 {
-                    divCommitFeed.InnerHtml += string.Format("<div class='feed-item'><div class='date'>{0}<br/>{1} pushed a commit:</div><div class='text'>&nbsp;&nbsp;<a href='{2}'>{3}</a></div></div>",
+                    divCommitFeed.InnerHtml += string.Format("<div class='feed-item'><div class='date'>{0}<br/>{1} pushed a commit:</div><div class='text'><a href='{2}'>{3}</a></div></div>",
                                                             c.Commit.Author.Date.DateTime.ToShortDateString(), c.Commit.Author.Name, c.HtmlUrl, c.Commit.Message);
                 }
             }

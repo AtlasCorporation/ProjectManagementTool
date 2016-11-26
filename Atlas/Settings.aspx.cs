@@ -14,6 +14,8 @@ public partial class Settings : System.Web.UI.Page
         // Check if some project is currently active from Session value
         if (Session["ActiveProject"] != null)
         {
+            divSettings.Visible = true;
+            divReminder.Visible = false;
             try
             {
                 // Get the active project's data from DB
@@ -23,6 +25,12 @@ public partial class Settings : System.Web.UI.Page
             {
                 lblMessages.Text = ex.Message;
             }
+        }
+        else
+        {
+            // No project selected
+            divSettings.Visible = false;
+            divReminder.Visible = true;
         }
 
         if (IsPostBack)

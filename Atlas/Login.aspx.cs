@@ -8,17 +8,12 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 public partial class Login : System.Web.UI.Page
 {
-    private string salt;
-    private string pw;
-    private string pwCheck;
-    private byte[] pw_bytes;
-    private byte[] pw_bytes2;
-
     protected void Page_Load(object sender, EventArgs e)
     {
         // Display message after successful account creation
@@ -31,16 +26,38 @@ public partial class Login : System.Web.UI.Page
 
     protected void LogIn_Click(object sender, EventArgs e)
     {
-        string ConnString = ConfigurationManager.ConnectionStrings["Mysli2"].ConnectionString;
         string username = usernamelogin.Text;
+        string password = passwordlogin.Text;
+        try
+        {
+            if (ValidateUser(username, password))
+            {
+                Session.Remove("ActiveProject");
+                FormsAuthentication.RedirectFromLoginPage(username, false);
+            }
+            else
+            {
+                lblMessages.Text = "Incorrect Credentials.";
+            }
+        }
+        catch (Exception)
+        {
+            lblMessages.Text = "Login Failed.";
+        }
+    }
+
+    protected bool ValidateUser(string username, string password)
+    {
+        string ConnString = ConfigurationManager.ConnectionStrings["Mysli2"].ConnectionString;
         string select = string.Format("Select id, password, salt from user where username=@username");
         DataTable dt = new DataTable();
         string checkSALT = "";
         string checkPW = "";
         int userId = 0;
+
         //Select with parameter
         string usernameRegex = @"^[A-Za-z0-9]+$";
-        if (Regex.IsMatch(usernamelogin.Text, usernameRegex))
+        if (Regex.IsMatch(username, usernameRegex))
         {
             try
             {
@@ -49,43 +66,32 @@ public partial class Login : System.Web.UI.Page
                 MyCommand.Parameters.AddWithValue("@username", username);
                 conn.Open();
                 MySqlDataAdapter da = new MySqlDataAdapter(MyCommand);
-
                 da.Fill(dt);
-
                 conn.Close();
                 da.Dispose();
                 checkPW = Convert.ToString(dt.Rows[0]["password"]);
                 checkSALT = Convert.ToString(dt.Rows[0]["salt"]);
                 userId = Convert.ToInt32(dt.Rows[0]["id"]);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                lblMessages.Text = "Problems with credentials";
+                throw;
             }
 
-            //Generates check pattern from userinputs to check if Hash matches one in database
-            pw = usernamelogin.Text + checkSALT + passwordlogin.Text;
-            pw_bytes2 = ASCIIEncoding.ASCII.GetBytes(pw);
+            //Generates check pattern from user inputs to check if Hash matches one in database
+            string pw = username + checkSALT + password;
+            byte[] pw_bytes = ASCIIEncoding.ASCII.GetBytes(pw);
             SHA512Managed sha512 = new SHA512Managed();
 
-            var hashed_byte_array = sha512.ComputeHash(pw_bytes2);
+            var hashed_byte_array = sha512.ComputeHash(pw_bytes);
 
             if (Convert.ToBase64String(hashed_byte_array) == checkPW)
             {
-                Session["LoggedUser"] = usernamelogin.Text;
+                Session["LoggedUser"] = username;
                 Session["LoggedUserId"] = userId;
-                lblMessages.Text = "Login success";
-                Response.Redirect("Home.aspx");
-            }
-            else
-            {
-                lblMessages.Text = "Password or username is wrong";
+                return true;
             }
         }
-        else
-        {
-            lblMessages.Text = "Password or username is wrong";
-        }
-
+        return false;
     }
 }

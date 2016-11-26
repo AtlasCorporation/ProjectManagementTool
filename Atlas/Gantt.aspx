@@ -5,10 +5,8 @@
     <link href="Content/dhtmlxgantt/dhtmlxgantt_broadway.css" rel="stylesheet" />
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
-    <div runat="server" id="reminderDiv" class="w3-center" visible="false">
-        <div class="w3-padding-128">
-            <asp:Label runat="server" ID="lblReminder" Text="Select a project to show the GANTT-chart!" />
-        </div>
+    <div runat="server" id="reminderDiv" class="alert alert-info" visible="false">
+        <asp:Label runat="server" ID="lblReminder" Text="<strong>Select a project!</strong> Please select a project first to show the GANTT-chart." />     
     </div> 
     <div runat="server" id="mainDiv" visible="true">
         <div id="ganttDiv"  style='width:100%; min-height:400px;'>

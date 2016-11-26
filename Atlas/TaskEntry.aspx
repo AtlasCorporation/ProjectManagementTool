@@ -10,10 +10,8 @@
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">   
-    <div runat="server" id="reminderDiv" class="w3-center">
-        <div class="w3-padding-128">
-            <asp:Label runat="server" ID="lblReminder" Text="You need to login and select a project before managing logged data!" />
-        </div>
+    <div runat="server" id="reminderDiv" class="alert alert-info">
+        <asp:Label runat="server" ID="lblReminder" Text="<strong>Login!</strong> Please login and select a project before managing logged data." />
     </div> 
     <div runat="server" id="mainDiv">
         <div>
