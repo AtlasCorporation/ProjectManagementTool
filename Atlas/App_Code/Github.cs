@@ -51,7 +51,7 @@ public class Github
             {
                 for (int i = 0; i < commits.Count; i++)
                 {
-                    if (i == 10) // Take only latest (10) commits
+                    if (i == 6) // Take only latest (6) commits
                         break;
                     commitList.Add(commits[i]);
                 }

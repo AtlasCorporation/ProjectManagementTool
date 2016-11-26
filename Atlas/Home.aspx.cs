@@ -100,8 +100,10 @@ public partial class Home : System.Web.UI.Page
     protected void InitProjectHomePage()
     {
         lblProjectName.Text = activeProject.name;
-        lblProjectDesc.Text = activeProject.description;
-        //InitGithub();
+        if (!string.IsNullOrEmpty(activeProject.description))
+            lblProjectDesc.Text = activeProject.description;
+        if (!string.IsNullOrEmpty(activeProject.github_username) && !string.IsNullOrEmpty(activeProject.github_reponame))
+            InitGithub();
     }
 
     /// <summary>
@@ -109,12 +111,22 @@ public partial class Home : System.Web.UI.Page
     /// </summary>
     protected async void InitGithub()
     {
-        lblCommitFeed.Text = "";
-        List<GitHubCommit> commits = await Github.GetCommits(activeProject.github_username, activeProject.github_reponame);
-        foreach (GitHubCommit c in commits)
+        divCommitFeed.InnerHtml = "";
+        try
         {
-            if (c.Committer.Login != null && c.Commit.Message != null)
-                lblCommitFeed.Text += "- " + c.Committer.Login + " -- " + c.Commit.Message + "<br/>";
+            List<GitHubCommit> commits = await Github.GetCommits(activeProject.github_username, activeProject.github_reponame);
+            if (commits != null && commits.Count > 0)
+            {
+                foreach (GitHubCommit c in commits)
+                {
+                    divCommitFeed.InnerHtml += string.Format("<div class='feed-item'><div class='date'>{0}<br/>{1} pushed a commit:</div><div class='text'>&nbsp;&nbsp;<a href='{2}'>{3}</a></div></div>",
+                                                            c.Commit.Author.Date.DateTime.ToShortDateString(), c.Commit.Author.Name, c.HtmlUrl, c.Commit.Message);
+                }
+            }
+        }
+        catch (Exception)
+        {
+            lblMessages.Text = "Failed loading commits from Github!";
         }
     }
 }
