@@ -187,7 +187,46 @@ public class Database
 
         return query;
         }
-    }*/
+    }
+    
+         
+    public static List<Task> GetTasks(int projectID)
+    {
+        // hae kaikki projektiin liittyvien donetaskien ja taskien olennainen data
+        var donetasks = (from dtask in ctx.donetasks
+                         join t in (from c in ctx.tasks where c.project_id == projectID select c) on dtask.task_id equals t.id
+                         where dtask.task_id == t.id
+                         select new { TaskID = t.id, dTaskID = dtask.id, Date = dtask.date, Worker = dtask.user_id, WorkTime = dtask.worktime, Name = t.name, Parent = t.task_id });
+
+        Task tempTask;
+
+        List<Task> Tasks = new List<Task>();
+
+        // luo datasta uusia Task-olioita. 
+        // Huom, Task != task
+        // Task on oma luokkansa joka sisältää molempien taulujen dataa 
+        int i = 1;
+        foreach (var dtask in donetasks)
+        {
+            tempTask = new Task(dtask.TaskID, dtask.Name, dtask.Date.Value.Day + "-" + dtask.Date.Value.Month + "-" + dtask.Date.Value.Year, dtask.WorkTime, dtask.Parent, i);
+            Tasks.Add(tempTask);
+            i++;
+        }
+
+        // asetetaan Taskeille parentit ganttia varten
+        foreach (Task t in Tasks)
+        {
+            if (t.Parent != null)
+            {
+                t.GanttParentId = (from d in Tasks where d.ID == t.Parent select d.GanttId).FirstOrDefault();
+            }
+        }
+
+        return Tasks;
+    }
+
+         
+         */
     #endregion
     public static IEnumerable<task> GetProjectTasks(int projectID)
     {
@@ -397,43 +436,6 @@ public class Database
             return rootTasks;
         }
     }
-
-
-    public static List<Task> GetTasks(int projectID)
-    {
-        // hae kaikki projektiin liittyvien donetaskien ja taskien olennainen data
-        var donetasks = (from dtask in ctx.donetasks
-                         join t in (from c in ctx.tasks where c.project_id == projectID select c) on dtask.task_id equals t.id
-                         where dtask.task_id == t.id
-                         select new { TaskID = t.id, dTaskID = dtask.id, Date = dtask.date, Worker = dtask.user_id, WorkTime = dtask.worktime, Name = t.name, Parent = t.task_id });
-
-        Task tempTask;
-
-        List<Task> Tasks = new List<Task>();
-
-        // luo datasta uusia Task-olioita. 
-        // Huom, Task != task
-        // Task on oma luokkansa joka sisältää molempien taulujen dataa 
-        int i = 1;
-        foreach (var dtask in donetasks)
-        {
-            tempTask = new Task(dtask.TaskID, dtask.Name, dtask.Date.Value.Day + "-" + dtask.Date.Value.Month + "-" + dtask.Date.Value.Year, dtask.WorkTime, dtask.Parent, i);
-            Tasks.Add(tempTask);
-            i++;
-        }
-
-        // asetetaan Taskeille parentit ganttia varten
-        foreach (Task t in Tasks)
-        {
-            if (t.Parent != null)
-            {
-                t.GanttParentId = (from d in Tasks where d.ID == t.Parent select d.GanttId).FirstOrDefault();
-            }
-        }
-
-        return Tasks;
-    }
-
 
     #endregion
 

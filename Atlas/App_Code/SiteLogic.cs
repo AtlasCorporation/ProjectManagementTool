@@ -16,34 +16,6 @@ public class SiteLogic
 
     }
 
-    public static string GetTasksInJson(int projectID)
-    {
-        string tasksJson = "{data:[";
-        List<Task> tasks = Database.GetTasks(projectID);
-        Task tempTask;
-        for (int i = 0; i < tasks.Count; i++)
-        {
-            tempTask = tasks.ElementAt(i);
-            tasksJson += "{id:" + tempTask.GanttId;
-            if (tempTask.Parent != null)
-            {
-                tasksJson += @", text:""" + tempTask.Text + @""", start_date:""" + tempTask.StartDate + @""", duration:" + tempTask.Duration + ", parent:" + tempTask.GanttParentId + "}";
-            }
-            else
-            {
-                tasksJson += "}";
-            }
-            if (i != tasks.Count - 1)
-            {
-                tasksJson += ",";
-            }
-        }
-        
-        tasksJson += "]}";
-        
-        return tasksJson;
-    }
-
     public static string GetTasksJson(int projectId)
     {
         IEnumerable<donetask> donetasks;
@@ -226,7 +198,7 @@ public class SiteLogic
         return nodes;
     }
 
-    #region backupit
+    #region backups
     /*
     public static List<Task> GetTasks(int projectID)
     {
@@ -246,6 +218,37 @@ public class SiteLogic
             tasks.Add(tempTask);
         }
         return tasks;
-    }*/
+    }
+    
+       public static string GetTasksInJson(int projectID)
+    {
+        string tasksJson = "{data:[";
+        List<Task> tasks = Database.GetTasks(projectID);
+        Task tempTask;
+        for (int i = 0; i < tasks.Count; i++)
+        {
+            tempTask = tasks.ElementAt(i);
+            tasksJson += "{id:" + tempTask.GanttId;
+            if (tempTask.Parent != null)
+            {
+                tasksJson += @", text:""" + tempTask.Text + @""", start_date:""" + tempTask.StartDate + @""", duration:" + tempTask.Duration + ", parent:" + tempTask.GanttParentId + "}";
+            }
+            else
+            {
+                tasksJson += "}";
+            }
+            if (i != tasks.Count - 1)
+            {
+                tasksJson += ",";
+            }
+        }
+        
+        tasksJson += "]}";
+        
+        return tasksJson;
+    }
+
+     
+     */
     #endregion
 }
