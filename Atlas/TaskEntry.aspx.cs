@@ -33,33 +33,64 @@ public partial class TaskEntry : System.Web.UI.Page
     protected void InitControls()
     {
         // anna funktiolle projektin id
-        List<TaskNode> nodes = SiteLogic.GetTaskNodes(Convert.ToInt32(Session["ActiveProject"]));
-
-        foreach (TaskNode node in nodes)
-        {
-            twTasks.Nodes.Add(node);
-        }
+        BuildTaskTree();
         twTasks.CollapseAll();
+
         hours = new List<string>();
         for(int i = 0;i<24;i++)
         {
             if(i<10){ hours.Add("0" + i); }
             else { hours.Add("" + i);}            
         }
+
+        ddlHours.DataSource = hours;
+        ddlHours.DataBind();
+        ddlHours.SelectedIndex = 8;
+
         minutes = new List<string>();
+
         for(int i = 0;i<60;i++)
         {
             if (i < 10){ minutes.Add("0" + i); }
             else { minutes.Add("" + i); }
         }
-        ddlWorkTime.DataSource = hours;
-        ddlWorkTime.DataBind();
-        ddlHours.DataSource = hours;
-        ddlHours.DataBind();
-        ddlHours.SelectedIndex = 8;
+
         ddlMinutes.DataSource = minutes;
         ddlMinutes.DataBind();
+
+        hours = new List<string>();
+
+        for (int i = 1; i <= 24; i++)
+        {
+            hours.Add("" + i);
+        }
+
+        ddlWorkTime.DataSource = hours;
+        ddlWorkTime.DataBind();
+
+        calendar.VisibleDate = DateTime.Now;
         calendar.SelectedDate = DateTime.Now;
+    }
+        
+    protected void BuildTaskTree()
+    {
+        List<TaskNode> nodes = SiteLogic.GetTaskNodes(Convert.ToInt32(Session["ActiveProject"]));
+
+        foreach (TaskNode node in nodes)
+        {
+            twTasks.Nodes.Add(node);
+        }            
+
+        if(twTasks.Nodes.Count == 0)
+        {
+            virginDiv.Visible = true;
+            taskControlDiv.Visible = false;
+        }
+        else
+        {
+            virginDiv.Visible = false;
+            taskControlDiv.Visible = true;
+        }
     }
 
     protected void twTasks_SelectedNodeChanged(object sender, EventArgs e)
@@ -76,12 +107,51 @@ public partial class TaskEntry : System.Web.UI.Page
         lblHelp.Text = string.Empty;
     }
 
-    protected void btnAddTask_Click(object sender, EventArgs e)
+    protected void btnVirginTask_Click(object sender, EventArgs e)
     {
+        if (Session["ActiveProject"] != null)
+        {
+            if (Session["LoggedUser"] != null)
+            {
+                if(tbVirginTask.Text != string.Empty && tbVirginTask.Text != null)
+                {
+                    int result = Database.AddTask(null, Convert.ToInt32(Session["ActiveProject"]), tbVirginTask.Text);
+                    if (result > 0)
+                    {
+                        lblHelp.Text = "Save successful!";
+                        virginDiv.Visible = false;
+                        taskControlDiv.Visible = true;
+                        twTasks.Nodes.Clear();
+                        BuildTaskTree();
+                    }
+                    else { lblHelp.Text = "Save failed!"; }
+                }
+                else
+                {
+                    lblHelp.Text = "Type a name!";
+                }
+            }
+            else
+            {
+                lblHelp.Text = "Login first!";
+                lblSelectedTask.Text = string.Empty;
+            }
+        }
+        else
+        {
+            lblHelp.Text = "Choose a project first!";
+            lblSelectedTask.Text = string.Empty;
+        }
+    }
+
+    protected void btnAddTask_Click(object sender, EventArgs e)
+    {       
+
         if(Session["ActiveProject"] != null)
         {
             if (Session["LoggedUser"] != null)
-            {                
+            {
+                
                 if (tbTaskName.Text != null && tbTaskName.Text != string.Empty)
                 {
                     if(cbIsRoot.Checked)
@@ -89,26 +159,32 @@ public partial class TaskEntry : System.Web.UI.Page
                         int result = Database.AddTask(null, Convert.ToInt32(Session["ActiveProject"]), tbTaskName.Text);
                         if(result > 0)
                         {
-                            lblConfirmSave.Text = "Save successful!";
+                            lblHelp.Text = "Save successful!";
+                            addTaskDiv.Visible = false;
+                            twTasks.Nodes.Clear();
+                            BuildTaskTree();
                         }
                         else
                         {
-                            lblConfirmSave.Text = "Save failed!";
+                            lblHelp.Text = "Save failed!";
                         }
                     }
                     else 
                     {
                         if (twTasks.SelectedNode != null)
                         {
-                            int? taskId = Convert.ToInt32(Session["SelectedTask"]);
+                            int? taskId = Convert.ToInt32(twTasks.SelectedValue);
                             int result = Database.AddTask(taskId, Convert.ToInt32(Session["ActiveProject"]), tbTaskName.Text);
                             if (result > 0)
                             {
-                                lblConfirmSave.Text = "Save successful!";
+                                lblHelp.Text = "Save successful!";
+                                addTaskDiv.Visible = false;
+                                twTasks.Nodes.Clear();
+                                BuildTaskTree();
                             }
                             else
                             {
-                                lblConfirmSave.Text = "Save failed!";
+                                lblHelp.Text = "Save failed!";
                             }
                         }
                         else
@@ -158,10 +234,10 @@ public partial class TaskEntry : System.Web.UI.Page
                         int workingHours = Convert.ToInt32(ddlWorkTime.Text);
                         DateTime dateTime = new DateTime(calendar.SelectedDate.Year, calendar.SelectedDate.Month, calendar.SelectedDate.Day, Convert.ToInt32(ddlHours.Text), Convert.ToInt32(ddlMinutes.Text), 0);
 
-                        /*int result = Database.AddDonetask(Convert.ToInt32(selectedTaskId), userId, workingHours, dateTime);
+                       /* int result = Database.AddDonetask(Convert.ToInt32(twTasks.SelectedNode.Value), Session["LoggedUser"], workingHours, dateTime);
                         if (result != 0)
                         {
-                            lblConfirmSave.Text = "Saved! Task: " + selectedTaskName + ", user: " + Session["LoggedUser"] + ", hours: " + ddlWorkTime.Text + ", started at: " + dateTime;
+                            lblConfirmSave.Text = "Saved! Task: " + twTasks.SelectedNode.Text + ", user: " + Session["LoggedUser"] + ", hours: " + ddlWorkTime.Text + ", started at: " + dateTime;
                         }
                         else lblConfirmSave.Text = "Tallennus epäonnistui!";*/
                     }
@@ -214,6 +290,8 @@ public partial class TaskEntry : System.Web.UI.Page
         int taskId = Convert.ToInt32(twTasks.SelectedNode.Value);
         int result = Database.RemoveTask(taskId);
         lblHelp.Text = result + " rows deleted!";
+        twTasks.Nodes.Clear();
+        BuildTaskTree();
         removeTaskDiv.Visible = false;
         btnShowDeleteTask.Enabled = true;
     }
