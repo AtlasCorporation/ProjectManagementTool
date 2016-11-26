@@ -12,3 +12,4 @@
 * 24.11 - 4h Linq kyselyt ja taskien puunäkymä
 * 24.11 - 6h Tuntikirjaus-sivun rakennus
 * 25.11 - 3h Taskien lisäämis/poistamis -toiminnallisuus
+* 26.11 - 6h Taskien hallinnointisivun UI:n muokkaus ja virheentarkistukset
