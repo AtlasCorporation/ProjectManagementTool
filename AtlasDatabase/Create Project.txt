@@ -1,5 +1,7 @@
 CREATE TABLE project ( 
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(50) NOT NULL UNIQUE,
-	customer VARCHAR(255)
+	customer VARCHAR(255),
+	github_username VARCHAR(50),
+	github_reponame VARCHAR(50)
 );
