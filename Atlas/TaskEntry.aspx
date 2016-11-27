@@ -15,12 +15,6 @@
     </div> 
     <div runat="server" id="mainDiv">
         <div>
-            <div class="w3-content w3-topbar w3-padding-tiny">
-                <div class="w3-center">
-                    <asp:Label runat="server" Text="Selected task:" />
-                    <asp:Label runat="server" ID="lblSelectedTask" Text="None selected" />
-                </div>
-            </div>    
             <div class="w3-content w3-center w3-padding-medium w3-twothird">
                 <div runat="server" id="virginDiv" visible="false" class="w3-padding">                
                     <asp:Label runat="server" Text="Create a new task" />   
@@ -92,6 +86,17 @@
                     <asp:Label runat="server" ID="lblHelp" Text="..." />                
                 </div>        
             </div>
+                <div class="w3-center">
+                    <asp:Label runat="server" Text="Selected task:" />
+                    <asp:Label runat="server" ID="lblSelectedTask" Text="None selected" />
+                </div>
+            <asp:GridView runat="server" ID="gvDonetasks" AutoGenerateColumns="false" >
+                <Columns>                  
+                  <asp:BoundField DataField="id" Visible="false" ReadOnly="true" />
+                  <asp:BoundField DataField="worktime" HeaderText="Duration" ReadOnly="true"/>
+                  <asp:BoundField DataField="date" HeaderText="Starting date and time" ReadOnly="true" />
+                </Columns> 
+            </asp:GridView>
         </div>
     </div>
 

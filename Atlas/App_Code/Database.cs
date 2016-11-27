@@ -481,6 +481,18 @@ public class Database
         }
     }
 
+    public static IEnumerable<donetask> GetDonetasks(int taskId, int userId)
+    {
+        using (atlasEntities db = new atlasEntities())
+        {
+            var donetasks = from c in db.donetasks
+                            where c.task_id == taskId && c.user_id == userId
+                            select c;
+
+            return donetasks.ToList();
+        }
+    }
+
     public static IEnumerable<task> GetMajorTasks(int projectId)
     {
         using (atlasEntities db = new atlasEntities())
@@ -496,6 +508,8 @@ public class Database
     #endregion
 
     #region WorkLog
+
+
 
     public static int AddDonetask(int taskId, int userId, int workTime, DateTime time)
     {

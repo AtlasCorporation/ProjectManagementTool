@@ -145,6 +145,13 @@ public class SiteLogic
         }
     }
 
+    public static List<donetask> GetDonetasks(int taskId, int userId)
+    {
+        IEnumerable<donetask> result = Database.GetDonetasks(taskId, userId);
+        List<donetask> donetasks = result.ToList();
+        return donetasks;
+    }
+
 
     public static List<TaskNode> GetTaskNodes(int projectID)
     {

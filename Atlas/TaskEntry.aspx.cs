@@ -100,10 +100,27 @@ public partial class TaskEntry : System.Web.UI.Page
         }
     }
 
+
+    protected void ShowDonetasks()
+    {
+        try
+        {
+            List<donetask> donetasks = SiteLogic.GetDonetasks(Convert.ToInt32(twTasks.SelectedValue), Convert.ToInt32(Session["LoggedUserId"]));
+            gvDonetasks.DataSource = donetasks;
+            gvDonetasks.DataBind();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
     protected void twTasks_SelectedNodeChanged(object sender, EventArgs e)
     {
         lblSelectedTask.Text = twTasks.SelectedNode.Text;
         lblParent.Text = twTasks.SelectedNode.Text;
+
+        ShowDonetasks();
     }
 
     protected void btnShowAddTask_Click(object sender, EventArgs e)
