@@ -48,9 +48,7 @@
         </div>
     </div>
 </div>
-<div class="alert alert-info" id="divReminder" runat="server" visible="false">
-    <strong>Select a project!</strong> Please select a project first to change it's settings.
-</div>
+<div class="alert alert-info" id="divAlert" runat="server" visible="false"></div>
 
 <!-- Confirm delete modal -->
 <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel">

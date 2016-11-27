@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -22,6 +23,7 @@ public partial class TaskEntry : System.Web.UI.Page
             if (!IsPostBack)
             {
                 InitControls();
+                InitUsers();
             }
 
             if (twTasks.SelectedNode != null)
@@ -352,6 +354,42 @@ public partial class TaskEntry : System.Web.UI.Page
         else
         {
             parentSelectionDiv.Visible = true;
+        }
+    }
+
+    protected void InitUsers()
+    {
+        try
+        {
+            List<user> users = Database.GetAllUsers();
+            foreach (var u in users)
+            {
+                cblUsers.Items.Add(new ListItem(u.username));
+            }
+            cblUsers.ClearSelection();
+        }
+        catch (Exception ex)
+        {
+            lblHelp.Text = ex.Message;
+        }
+    }
+
+    protected void btnAddUsersToProject_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            foreach (ListItem item in cblUsers.Items)
+            {
+                if (item.Selected)
+                {
+                    Database.AddProjectToUser(item.Text, Convert.ToInt32(Session["ActiveProject"]));
+                }
+            }
+            lblHelp.Text = "Successfully added selected users to this project!";
+        }
+        catch (Exception ex)
+        {
+            lblHelp.Text = ex.Message;
         }
     }
 }

@@ -11,7 +11,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">   
     <div runat="server" id="reminderDiv" class="alert alert-info">
-        <asp:Label runat="server" ID="lblReminder" Text="<strong>Login!</strong> Please login and select a project before managing logged data." />
+        <asp:Label runat="server" ID="lblReminder" Text="<strong>Login and select a project!</strong> Please login and select a project before managing logged data." />
     </div> 
     <div runat="server" id="mainDiv">
         <div>
@@ -88,10 +88,32 @@
             </div>
             <div class="w3-bottombar">
                 <div class="w3-center w3-content">
-                    <asp:Label runat="server" ID="lblHelp" Text="Work work!" />                
+                    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addUsers">Add some peons to work!</button><br />
+                    <asp:Label runat="server" ID="lblHelp" Text="..." />                
                 </div>        
             </div>
         </div>
     </div>
+
+<!-- Add users modal -->
+<div class="modal fade" id="addUsers" tabindex="-1" role="dialog" aria-labelledby="addUsersLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addUsersLabel">Add users to this project</h4>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <asp:CheckBoxList ID="cblUsers" cssclass="checkbox" runat="server"></asp:CheckBoxList>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <asp:Button ID="btnAddUsersToProject" runat="server" Text="Lazy Peons, get to work!" cssclass="btn btn-primary" OnClick="btnAddUsersToProject_Click" /><br />
+      </div>
+    </div>
+  </div>
+</div>
 </asp:Content>
 

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Web;
@@ -117,10 +119,11 @@ public class Database
                     }
                 }
 
-                // Add project to user
+                // Add project to user (if user doesn't have it already)
                 if (user != null && project != null)
                 {
-                    user.projects.Add(project);
+                    if (!user.projects.Contains(project))
+                        user.projects.Add(project);
                 }
                 db.SaveChanges(); 
             }
@@ -130,6 +133,59 @@ public class Database
             throw;
         }
     }
+
+    #endregion
+
+    #region USERS
+
+    /// <summary>
+    /// Gets all users from DB.
+    /// </summary>
+    public static List<user> GetAllUsers()
+    {
+        try
+        {
+            using (var db = new atlasEntities())
+            {
+                return db.users.ToList();
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Adds given role to given user for given project.
+    /// </summary>
+    public static bool AddRoleForUserToProject(string role, int userID, int projectID)
+    {
+        string ConnString = ConfigurationManager.ConnectionStrings["Mysli2"].ConnectionString;
+        string query = string.Format("UPDATE user_project SET role=@role WHERE user_id=@userID AND project_id=@projectID");
+        if (Authorizer.isValidRole(role))
+        {
+            try
+            {
+                MySqlConnection conn = new MySqlConnection(ConnString);
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@role", role);
+                cmd.Parameters.AddWithValue("@userID", userID);
+                cmd.Parameters.AddWithValue("@projectID", projectID);
+                conn.Open();
+                int rows = cmd.ExecuteNonQuery();
+                conn.Close();
+                if (rows > 0)
+                    return true; // Success
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        return false;
+    }
+
     #endregion
 
     #region GANTT

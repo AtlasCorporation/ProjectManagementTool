@@ -14,6 +14,6 @@ public partial class Logout : System.Web.UI.Page
         Session.Remove("LoggedUserId");
         Session.Remove("ActiveProject");
         FormsAuthentication.SignOut();
-        FormsAuthentication.RedirectToLoginPage();
+        Response.Redirect("Home.aspx");
     }
 }

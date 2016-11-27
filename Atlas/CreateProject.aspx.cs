@@ -49,6 +49,13 @@ public partial class CreateProject : System.Web.UI.Page
                 Database.AddProjectToUser(loggedUser, newProject.id);
             }
 
+            // Make the user admin of the project
+            if (Session["LoggedUserId"] != null)
+            {
+                int userId = Convert.ToInt32(Session["LoggedUserId"]);
+                Database.AddRoleForUserToProject("admin", userId, newProject.id);
+            }
+
             // User wants project to be public -> add it to default-user
             if (!cbPrivateProject.Checked)
             {

@@ -11,35 +11,54 @@ public partial class Settings : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        // Check if some project is currently active from Session value
-        if (Session["ActiveProject"] != null)
+        // Check login
+        if (Session["LoggedUserId"] != null)
         {
-            divSettings.Visible = true;
-            divReminder.Visible = false;
-            try
+            // Check if project is active
+            if (Session["ActiveProject"] != null)
             {
-                // Get the active project's data from DB
-                activeProject = Database.GetProjectFromDb(Convert.ToInt32(Session["ActiveProject"]));
+                // Check if user is admin of this project
+                if (Authorizer.CheckUserRoleForProject(Convert.ToInt32(Session["LoggedUserId"]), "admin", Convert.ToInt32(Session["ActiveProject"])))
+                {
+                    InitDivs(true);
+                    try
+                    {
+                        // Get the active project's data from DB
+                        activeProject = Database.GetProjectFromDb(Convert.ToInt32(Session["ActiveProject"]));
+                        if (IsPostBack)
+                        {
+                            // Set focus back to ProjectDesc after postback
+                            Page.SetFocus(txtProjectDesc);
+                        }
+                        else
+                            InitProjectSettingsPage();
+                    }
+                    catch (Exception ex)
+                    {
+                        lblMessages.Text = ex.Message;
+                    }
+                }
+                else
+                {
+                    InitDivs(false);
+                    divAlert.InnerHtml = "<strong>Permission denied!</strong> You don't have permission to access this page.";
+                }
             }
-            catch (Exception ex)
+            else
             {
-                lblMessages.Text = ex.Message;
+                InitDivs(false);
+                divAlert.InnerHtml = "<strong>Select a project!</strong> Please select a project to change the settings.";
             }
         }
-        else
-        {
-            // No project selected
-            divSettings.Visible = false;
-            divReminder.Visible = true;
-        }
+    }
 
-        if (IsPostBack)
-        {
-            // Set focus back to ProjectDesc after postback
-            Page.SetFocus(txtProjectDesc);
-        }
-        else
-            InitProjectSettingsPage();
+    /// <summary>
+    /// Shows/hides settings page.
+    /// </summary>
+    protected void InitDivs(bool showSettings)
+    {
+        divSettings.Visible = showSettings;
+        divAlert.Visible = !showSettings;
     }
 
     /// <summary>
