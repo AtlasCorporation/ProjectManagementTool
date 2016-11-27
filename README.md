@@ -14,3 +14,4 @@
 * 25.11 - 3h Taskien lisäämis/poistamis -toiminnallisuus
 * 26.11 - 6h Taskien hallinnointisivun UI:n muokkaus ja virheentarkistukset
 * 26.11 - 6h Gantt-chartin uudelleenkonfigurointia ja bugienkorjausta
+* 27.11 - 2h Donetaskien listaus käyttäjäkohtaisesti
