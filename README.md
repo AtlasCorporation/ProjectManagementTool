@@ -11,3 +11,4 @@ Tunnit:
 * 23.11 - 3h Merge ja suunnittelu
 * 24.11 - 2h Projektien lisäys/listaus kirjautuneelle käyttäjälle
 * 25.11 - 3,5h Ulkoasun parannuksia, commit feedi
+* 26.11 - 8h Authorisointi, käyttäjien roolit projektissa, autentikointiin muutoksia, käyttäjien lisääminen projektiin
