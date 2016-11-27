@@ -12,7 +12,9 @@ CREATE TABLE user (
 CREATE TABLE project ( 
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(50) NOT NULL,
-	customer VARCHAR(255)
+	customer VARCHAR(255),
+	github_username VARCHAR(50),
+	github_reponame VARCHAR(50)
 );
 
 CREATE TABLE task ( 
@@ -37,6 +39,7 @@ CREATE TABLE donetask (
 CREATE TABLE user_project(
 user_id INT NOT NULL,
 project_id INT NOT NULL, 
+role VARCHAR(50) DEFAULT 'user', 
 PRIMARY KEY (user_id, project_id),
  FOREIGN KEY project_user_key(project_id) REFERENCES project(id),
  FOREIGN KEY user_project_key(user_id) REFERENCES user(id)
