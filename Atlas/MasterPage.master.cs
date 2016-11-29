@@ -30,8 +30,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
         {
             if(Session["ActiveProject"] != null)
             {
-                string activeProject = Session["ActiveProject"].ToString();
-                lblProject.Text = activeProject;
+                lblProject.Text = Database.GetProjectFromDb(Convert.ToInt32(Session["ActiveProject"])).name;
             }
             // Check if some user is logged in
             if (Session["LoggedUser"] != null)

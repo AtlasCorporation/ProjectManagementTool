@@ -25,6 +25,13 @@
         });
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+    <style>
+        table.login-info {
+            table-layout: fixed;
+            width: 100%;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -74,17 +81,13 @@
             <li class="active"><a href="Documentation.aspx"><span class="glyphicon glyphicon-book"></span> Documentation</a></li>
             <li class="active"><a href="Settings.aspx"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
             <li class="active"><a href="Login.aspx" id="aLogin" runat="server"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            <li class="active" style="padding:20px;">
+                <table class="login-info">
+                    <tr><td>Logged in as:</td><td><asp:Label ID="lblUser" runat="server" Text="None" cssclass="text-info" /></td></tr>
+                    <tr><td>Selected project: </td><td><asp:Label ID="lblProject" runat="server" Text="None" cssclass="text-info" /></td></tr>
+                </table>
+            </li>
         </ul>        
-    </div>
-    <div class="w3-center">
-        <div class="w3-section">
-            <asp:Label runat="server" Text="Logged user:"/>
-            <asp:Label ID="lblUser" runat="server" Text="None" />
-        </div>
-        <div class="w3-section">
-            <asp:Label runat="server" Text="Selected project:"/>
-            <asp:Label ID="lblProject" runat="server" Text="None" />
-        </div>
     </div>
     </nav>
     

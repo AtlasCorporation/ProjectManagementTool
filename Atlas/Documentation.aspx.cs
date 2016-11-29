@@ -4,24 +4,49 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.IO;
 
 public partial class Documentation : System.Web.UI.Page
 {
     DocumentHandler dh = new DocumentHandler();
-
-    /*
-    KAIKKI SERVER.MAPPATH KORJATTAVA PROJEKTIN NIMILLÄ, KUN OLLAAN MUOKKAAMASSA KYSEISTÄ PROJEKTIA!
-    */
+    protected string activeProjectName;
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
+        btnEdit.Visible = false;
+        btnSave.Visible = false;
+        btnCancel.Visible = false;
+
+        if (Session["ActiveProject"] != null)
         {
-            string path = Server.MapPath("~/Resources/TestiFilu.txt");
-            ShowDocument.Text = dh.ReadFile(path);
+            divDocumentation.Visible = true;
+            divAlert.Visible = false;
+
+            // Roles "user" and "admin" are authorized to edit documentation
+            List<string> authorizedRolesToEditDocs = new List<string> { "user", "admin" };
+            if (Session["LoggedUserId"] != null)
+            {
+                if (Authorizer.CheckUserRoleForProject(Convert.ToInt32(Session["LoggedUserId"]), authorizedRolesToEditDocs, Convert.ToInt32(Session["ActiveProject"])))
+                    btnEdit.Visible = true; // Allow edit if logged-in user has role "user" or "admin"
+            }
+
+            // Create folder for active project if it doesn't exist already
+            activeProjectName = Database.GetProjectFromDb(Convert.ToInt32(Session["ActiveProject"])).name;
+            string projectFolder = Server.MapPath("~/Resources/" + activeProjectName);
+            if (!Directory.Exists(projectFolder))
+                Directory.CreateDirectory(projectFolder);
+
+            // Create txt-file for active project it it doesn't exist already
+            string txtFile = projectFolder + "/Doc.txt";
+            if (!File.Exists(txtFile))
+                File.Create(txtFile);
+            ShowDocument.Text = dh.ReadFile(txtFile);
             ModeText.Visible = false;
-            btnSave.Visible = false;
-            btnCancel.Visible = false;
+        }
+        else
+        {
+            divDocumentation.Visible = false;
+            divAlert.Visible = true;
         }
     }
 
@@ -29,25 +54,31 @@ public partial class Documentation : System.Web.UI.Page
     {
         ShowDocument.Visible = true;
         ModeText.Visible = false;
-        btnVisibility();
-        string path = Server.MapPath("~/Resources/TestiFilu.txt");
+        btnEdit.Visible = true;
+        btnSave.Visible = false;
+        btnCancel.Visible = false;
+        string path = Server.MapPath("~/Resources/" + activeProjectName + "/Doc.txt");
         dh.SaveFile(path, ModeText);
-       // ShowDocument.Text = dh.ReadFile(path);
+        Response.Redirect(Request.RawUrl);
     }
 
     protected void btnEdit_Click(object sender, EventArgs e)
     {
         ShowDocument.Visible = false;
         ModeText.Visible = true;
-        btnVisibility();
-        string path = Server.MapPath("~/Resources/TestiFilu.txt");
+        btnEdit.Visible = false;
+        btnSave.Visible = true;
+        btnCancel.Visible = true;
+        string path = Server.MapPath("~/Resources/" + activeProjectName + "/Doc.txt");
         ModeText.Text = dh.EditFile(path);
     }
 
     protected void btnCancel_Click(object sender, EventArgs e)
     {
         ShowDocument.Visible = true;
-        btnVisibility();
+        btnEdit.Visible = true;
+        btnSave.Visible = false;
+        btnCancel.Visible = false;
         ModeText.Visible = false;
     }
     private void btnVisibility()
