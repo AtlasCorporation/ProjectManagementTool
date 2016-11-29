@@ -11,6 +11,7 @@
 ~~- GANTT-piirtäminen akitiivisen projektin perusteella Janne~~
 
 - Dokumentaatio loppuun (CRUD-toiminnot, valmiit templaatit vaatimusmäärittely jne?, joku text-editor plugari, markdown/html?) Olli
+
 ~~- Githubista kamat home-pagelle (commit feed, projektissa käytetyt koodikielet) Aleksi~~
 
 ~~- Tuntikirjaus sivu Janne~~
