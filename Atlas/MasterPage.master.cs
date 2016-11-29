@@ -9,10 +9,9 @@ public partial class MasterPage : System.Web.UI.MasterPage
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        CheckLogin();
         if (!IsPostBack)
-        {
             InitProjects();
-        }
     }
 
     /// <summary>
@@ -23,11 +22,58 @@ public partial class MasterPage : System.Web.UI.MasterPage
         // Always add "Create new" as first item (index = 0)
         lbProjects.Items.Add(new ListItem("Create new project"));
 
-        // Get all user's projects from DB and add them to listbox
-        List<project> userProjects = GetAllProjectsForUser("Default"); // Change this if logged in (once login-system is done). "Default" account has projects that are displayed to guests (= not logged in).
-        foreach (project p in userProjects)
+        // List of all projects user has
+        List<project> userProjects = new List<project>();
+
+        // Get all user's projects from DB
+        try
         {
-            lbProjects.Items.Add(new ListItem(p.name, p.name));
+            if(Session["ActiveProject"] != null)
+            {
+                lblProject.Text = Database.GetProjectFromDb(Convert.ToInt32(Session["ActiveProject"])).name;
+            }
+            // Check if some user is logged in
+            if (Session["LoggedUser"] != null)
+            {
+                string loggedUser = Session["LoggedUser"].ToString();
+                lblUser.Text = loggedUser;
+                // Get logged in user's projects
+                userProjects = Database.GetAllProjectsForUser(loggedUser);
+            }
+            // Not logged in, get Default-user's projects
+            else
+            {
+                userProjects = Database.GetAllProjectsForUser("Default");
+            }
+
+            // Add all user's projects to listbox
+            if (userProjects != null)
+            {
+                foreach (project p in userProjects)
+                {
+                    lbProjects.Items.Add(new ListItem(p.name, p.id.ToString()));
+                }
+            }
+        }
+        catch (Exception)
+        {
+        }
+    }
+
+    /// <summary>
+    /// Changes link to logout if you're currently logged in and vice versa.
+    /// </summary>
+    protected void CheckLogin()
+    {
+        if (Session["LoggedUser"] != null)
+        {
+            aLogin.HRef = ResolveUrl("~/Logout.aspx");
+            aLogin.InnerHtml = "<span class='glyphicon glyphicon-log-out'></span> Logout";
+        }
+        else
+        {
+            aLogin.HRef = ResolveUrl("~/Login.aspx");
+            aLogin.InnerHtml = "<span class='glyphicon glyphicon-log-in'></span> Login";
         }
     }
 
@@ -44,31 +90,5 @@ public partial class MasterPage : System.Web.UI.MasterPage
             Session["ActiveProject"] = lbProjects.SelectedValue;
             Response.Redirect("Home.aspx", true);
         }
-    }
-
-    /// <summary>
-    /// Gets all projects for given user from DB.
-    /// </summary>
-    protected List<project> GetAllProjectsForUser(string username)
-    {
-        try
-        {
-            using (var db = new atlasEntities())
-            {
-                var ret = from u in db.users
-                          where u.username == username
-                          select u;
-                var user = ret.FirstOrDefault();
-                if (user != null)
-                {
-                    return user.projects.ToList();
-                }
-            }
-        }
-        catch (Exception)
-        {
-
-        }
-        return null;
     }
 }

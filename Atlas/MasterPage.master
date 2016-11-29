@@ -7,6 +7,7 @@
     <title></title>
     <asp:ContentPlaceHolder id="head" runat="server">
     </asp:ContentPlaceHolder>
+    <link href="http://www.w3schools.com/lib/w3.css" rel="stylesheet" />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/sidebar.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -24,6 +25,13 @@
         });
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+    <style>
+        table.login-info {
+            table-layout: fixed;
+            width: 100%;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -68,15 +76,22 @@
             </li>
 
             <li class="active"><a href="Home.aspx"><span class="glyphicon glyphicon-home"></span> Home</a></li>
-            <li class="active"><a href="Index.aspx"><span class="glyphicon glyphicon-align-left"></span> Gantt chart</a></li>
-            <li class="active"><a href="Index.aspx"><span class="glyphicon glyphicon-book"></span> Documentation</a></li>
-            <li class="active"><a href="Index.aspx"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-        </ul>
+            <li class="active"><a href="Gantt.aspx"><span class="glyphicon glyphicon-align-left"></span> Gantt chart</a></li>
+            <li class="active"><a href="TaskEntry.aspx"><span class="glyphicon glyphicon-floppy-disk"></span> Manage work</a></li>
+            <li class="active"><a href="Documentation.aspx"><span class="glyphicon glyphicon-book"></span> Documentation</a></li>
+            <li class="active"><a href="Settings.aspx"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+            <li class="active"><a href="Login.aspx" id="aLogin" runat="server"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            <li class="active" style="padding:20px;">
+                <table class="login-info">
+                    <tr><td>Logged in as:</td><td><asp:Label ID="lblUser" runat="server" Text="None" cssclass="text-info" /></td></tr>
+                    <tr><td>Selected project: </td><td><asp:Label ID="lblProject" runat="server" Text="None" cssclass="text-info" /></td></tr>
+                </table>
+            </li>
+        </ul>        
     </div>
-
     </nav>
     
-    </div>
+    </div>  
 
     <!-- Main Content -->
     <div class="container-fluid">

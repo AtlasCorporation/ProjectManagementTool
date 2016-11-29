@@ -14,11 +14,12 @@ public partial class donetask
 {
     public int id { get; set; }
     public int task_id { get; set; }
-    public string whodid { get; set; }
     public int worktime { get; set; }
     public Nullable<System.DateTime> date { get; set; }
+    public int user_id { get; set; }
 
     public virtual task task { get; set; }
+    public virtual user user { get; set; }
 }
 
 public partial class project
@@ -71,6 +72,7 @@ public partial class user
     public user()
     {
         this.projects = new HashSet<project>();
+        this.donetasks = new HashSet<donetask>();
     }
 
     public int id { get; set; }
@@ -85,4 +87,6 @@ public partial class user
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<project> projects { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<donetask> donetasks { get; set; }
 }

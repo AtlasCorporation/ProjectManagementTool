@@ -4,14 +4,14 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="atlasModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="atlasModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="donetask">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="task_id" Type="int" Nullable="false" />
-          <Property Name="whodid" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="user_id" Type="int" Nullable="false" />
           <Property Name="worktime" Type="int" Nullable="false" />
           <Property Name="date" Type="datetime" Precision="0" />
         </EntityType>
@@ -66,6 +66,18 @@
             </Principal>
             <Dependent Role="donetask">
               <PropertyRef Name="task_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="donetask_ibfk_2">
+          <End Role="user" Type="Self.user" Multiplicity="1" />
+          <End Role="donetask" Type="Self.donetask" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="user">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="donetask">
+              <PropertyRef Name="user_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -127,6 +139,10 @@
             <End Role="task" EntitySet="task" />
             <End Role="donetask" EntitySet="donetask" />
           </AssociationSet>
+          <AssociationSet Name="donetask_ibfk_2" Association="Self.donetask_ibfk_2">
+            <End Role="user" EntitySet="user" />
+            <End Role="donetask" EntitySet="donetask" />
+          </AssociationSet>
           <AssociationSet Name="task_ibfk_1" Association="Self.task_ibfk_1">
             <End Role="task" EntitySet="task" />
             <End Role="task1" EntitySet="task" />
@@ -144,8 +160,7 @@
             <End Role="user_project" EntitySet="user_project" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="atlasModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -155,10 +170,11 @@
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="task_id" Type="Int32" Nullable="false" />
-          <Property Name="whodid" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="worktime" Type="Int32" Nullable="false" />
           <Property Name="date" Type="DateTime" />
           <NavigationProperty Name="task" Relationship="Self.donetask_ibfk_1" FromRole="donetask" ToRole="task" />
+          <Property Name="user_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="user" Relationship="atlasModel.donetask_ibfk_2" FromRole="donetask" ToRole="user" />
         </EntityType>
         <EntityType Name="project">
           <Key>
@@ -200,6 +216,7 @@
           <Property Name="modified" Type="DateTime" />
           <Property Name="role" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="projects" Relationship="Self.user_project" FromRole="user" ToRole="project" />
+          <NavigationProperty Name="donetasks" Relationship="atlasModel.donetask_ibfk_2" FromRole="user" ToRole="donetask" />
         </EntityType>
         <Association Name="donetask_ibfk_1">
           <End Role="task" Type="Self.task" Multiplicity="1" />
@@ -262,7 +279,23 @@
             <End Role="project" EntitySet="projects" />
             <End Role="user" EntitySet="users" />
           </AssociationSet>
+          <AssociationSet Name="donetask_ibfk_2" Association="atlasModel.donetask_ibfk_2">
+            <End Role="user" EntitySet="users" />
+            <End Role="donetask" EntitySet="donetasks" />
+          </AssociationSet>
         </EntityContainer>
+        <Association Name="donetask_ibfk_2">
+          <End Type="atlasModel.user" Role="user" Multiplicity="1" />
+          <End Type="atlasModel.donetask" Role="donetask" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="user">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="donetask">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -272,9 +305,9 @@
           <EntitySetMapping Name="donetasks">
             <EntityTypeMapping TypeName="atlasModel.donetask">
               <MappingFragment StoreEntitySet="donetask">
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="task_id" ColumnName="task_id" />
-                <ScalarProperty Name="whodid" ColumnName="whodid" />
                 <ScalarProperty Name="worktime" ColumnName="worktime" />
                 <ScalarProperty Name="date" ColumnName="date" />
               </MappingFragment>
