@@ -10,11 +10,15 @@
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">   
-    <div runat="server" id="reminderDiv" class="alert alert-info">
-        <asp:Label runat="server" ID="lblReminder" Text="<strong>Login and select a project!</strong> Please login and select a project before managing logged data." />
+    <div runat="server" id="reminderDiv" class="alert alert-info w3-section w3-center">
+        <asp:Label runat="server" ID="lblReminder" Text="<strong>Please login and select a project before managing logged data!</strong>" />
     </div> 
-    <div runat="server" id="mainDiv">
+    <div runat="server" id="mainDiv" class="w3-section panel panel-default">
         <div>
+            <div class="w3-center alert-info">
+                    <asp:Label runat="server" Text="Selected task:" />
+                    <asp:Label runat="server" ID="lblSelectedTask" Text="None selected" />
+                </div>
             <div class="w3-content w3-center w3-padding-medium w3-twothird">
                 <div runat="server" id="virginDiv" visible="false" class="w3-padding">                
                     <asp:Label runat="server" Text="Create a new task" />   
@@ -76,20 +80,10 @@
                     <asp:DropDownList runat="server" ID="ddlWorkTime" />
                 </div>
                 <br />
-                <asp:Button cssclass="btn btn-success" runat="server" ID="btnLogHours" Text="Save hours"  OnClick="btnLogHours_Click" Enabled="true"/>
+                <asp:Button cssclass="btn btn-success" runat="server" ID="btnLogHours" Text="Save work"  OnClick="btnLogHours_Click" Enabled="true"/>
                 <br />
                 <asp:Label runat="server" ID="lblConfirmSave" />        
-            </div>
-            <div class="w3-bottombar">
-                <div class="w3-center w3-content">
-                    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addUsers">Add some peons to work!</button><br />
-                    <asp:Label runat="server" ID="lblHelp" Text="..." />                
-                </div>        
-            </div>
-                <div class="w3-center">
-                    <asp:Label runat="server" Text="Selected task:" />
-                    <asp:Label runat="server" ID="lblSelectedTask" Text="None selected" />
-                </div>
+            </div>               
             <asp:GridView runat="server" ID="gvDonetasks" AutoGenerateColumns="false" >
                 <Columns>                  
                   <asp:BoundField DataField="id" Visible="false" ReadOnly="true" />
@@ -98,6 +92,10 @@
                 </Columns> 
             </asp:GridView>
         </div>
+        <div class="w3-center w3-content">
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addUsers">Add users to this project</button><br />
+            <asp:Label runat="server" ID="lblHelp" Text="..." />                
+        </div>   
     </div>
 
 <!-- Add users modal -->
@@ -115,7 +113,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <asp:Button ID="btnAddUsersToProject" runat="server" Text="Lazy Peons, get to work!" cssclass="btn btn-primary" OnClick="btnAddUsersToProject_Click" /><br />
+        <asp:Button ID="btnAddUsersToProject" runat="server" Text="Confirm" cssclass="btn btn-primary" OnClick="btnAddUsersToProject_Click" /><br />
       </div>
     </div>
   </div>

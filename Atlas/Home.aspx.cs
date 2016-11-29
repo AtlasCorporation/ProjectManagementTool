@@ -16,11 +16,12 @@ public partial class Home : System.Web.UI.Page
         // Check if some project is currently active from Session value
         if (Session["ActiveProject"] != null)
         {
+            divAlert.Visible = false;
+            divHome.Visible = true;
             // Get the active project's data from DB
             try
             {                
                 activeProject = Database.GetProjectFromDb(Convert.ToInt32(Session["ActiveProject"]));
-
                 // Pie chartit
                 InitMainPieChart();
                 if (Session["LoggedUserId"] != null)
@@ -34,12 +35,13 @@ public partial class Home : System.Web.UI.Page
             }
         }
         else
-        {
-            System.Diagnostics.Debug.WriteLine("Clearing piecharts");
-            userPieChart.Series.Clear();
-            usersPieChart.Series.Clear();
+        {            
+            // userPieChart.Series.Clear();
+            // usersPieChart.Series.Clear();
+            divAlert.Visible = true;
+            divHome.Visible = false;
         }
-
+        
         if (!IsPostBack && activeProject != null)
         {
             InitProjectHomePage();
@@ -50,8 +52,9 @@ public partial class Home : System.Web.UI.Page
     {
         // TODO: tarvitaan userin ID sessionista.
         var data = Database.GetProjectWorkingHoursForUser(Convert.ToInt32(Session["ActiveProject"]), Convert.ToInt32(Session["LoggedUserId"]));
-
+        
         ChartArea chartArea = new ChartArea("ChartArea");
+        userPieChart.ChartAreas.Clear();
         userPieChart.ChartAreas.Add(chartArea);
         userPieChart.ChartAreas["ChartArea"].Area3DStyle.Enable3D = true;
         userPieChart.Series.Clear();
@@ -60,7 +63,8 @@ public partial class Home : System.Web.UI.Page
         userPieChart.Series.Add("WorkHours");
         userPieChart.Series["WorkHours"].ChartType = SeriesChartType.Pie;
         DataPoint point;
-        
+        userPieChart.Legends.Clear();
+
         foreach (Task item in data)
         {
             point = new DataPoint(0, item.Duration);
@@ -78,6 +82,7 @@ public partial class Home : System.Web.UI.Page
         var data = Database.GetProjectWorkingHours(Convert.ToInt32(Session["ActiveProject"]));
 
         ChartArea chartArea = new ChartArea("ChartArea");
+        usersPieChart.ChartAreas.Clear();
         usersPieChart.ChartAreas.Add(chartArea);
         usersPieChart.ChartAreas["ChartArea"].Area3DStyle.Enable3D = true;
         usersPieChart.Series.Clear();
@@ -86,6 +91,7 @@ public partial class Home : System.Web.UI.Page
         usersPieChart.Series.Add("WorkHours");
         usersPieChart.Series["WorkHours"].ChartType = SeriesChartType.Pie;
         DataPoint point;
+        usersPieChart.Legends.Clear();
 
         foreach (Task item in data)
         {
