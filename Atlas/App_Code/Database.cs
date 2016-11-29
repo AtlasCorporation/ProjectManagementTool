@@ -12,8 +12,9 @@ public class Database
     public static task previouslyCreatedTask;
     public Database(){}
     #region PROJECTS
+
     /// <summary>
-    /// Gets project object from DB with the given project ID.
+    /// Gets project from DB with the given project ID.
     /// </summary>
     public static project GetProjectFromDb(int id)
     {
@@ -89,6 +90,44 @@ public class Database
     }
 
     /// <summary>
+    /// Deletes given project from database.
+    /// </summary>
+    public static void DeleteProject(int projectID)
+    {
+        try
+        {
+            using (var db = new atlasEntities())
+            {
+                // Find project from DB
+                project projectToDelete = null;
+                foreach (project p in db.projects)
+                {
+                    if (p.id == projectID)
+                    {
+                        projectToDelete = p;
+                        break;
+                    }
+                }
+
+                // Delete project's foreign key from all users
+                var users = db.users.ToList();
+                foreach (var u in users)
+                {
+                    u.projects.Remove(projectToDelete);
+                }
+
+                // Delete project
+                db.projects.Remove(projectToDelete);
+                db.SaveChanges();
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    /// <summary>
     /// Adds given project to given user.
     /// </summary>
     public static void AddProjectToUser(string username, int projectID)
@@ -134,9 +173,160 @@ public class Database
         }
     }
 
+    /// <summary>
+    /// Removes given project from given user.
+    /// </summary>
+    public static void RemoveProjectFromUser(string username, int projectID)
+    {
+        try
+        {
+            using (var db = new atlasEntities())
+            {
+                // Get user from DB
+                user user = null;
+                foreach (var u in db.users)
+                {
+                    if (u.username == username)
+                    {
+                        user = u;
+                        break;
+                    }
+                }
+
+                // Get project from DB
+                project project = null;
+                foreach (var p in db.projects)
+                {
+                    if (p.id == projectID)
+                    {
+                        project = p;
+                        break;
+                    }
+                }
+
+                // Remove project from user
+                if (user != null && project != null)
+                {
+                    if (user.projects.Contains(project))
+                        user.projects.Remove(project);
+                }
+                db.SaveChanges();
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Checks if given user has given project.
+    /// </summary>
+    public static bool UserHasProject(string username, int projectID)
+    {
+        try
+        {
+            using (var db = new atlasEntities())
+            {
+                // Get user from DB
+                user user = null;
+                foreach (var u in db.users)
+                {
+                    if (u.username == username)
+                    {
+                        user = u;
+                        break;
+                    }
+                }
+
+                // Get project from DB
+                project project = null;
+                foreach (var p in db.projects)
+                {
+                    if (p.id == projectID)
+                    {
+                        project = p;
+                        break;
+                    }
+                }
+
+                // Check if user has the project
+                if (user != null && project != null)
+                {
+                    if (user.projects.Contains(project))
+                        return true;
+                }
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Updates existing project's properties.
+    /// </summary>
+    public static void UpdateProjectProperties(int projectID, string projectName, string projectDesc, string githubUser, string githubRepo)
+    {
+        try
+        {
+            using (var db = new atlasEntities())
+            {
+                // Get project from DB
+                project project = null;
+                foreach (var p in db.projects)
+                {
+                    if (p.id == projectID)
+                    {
+                        project = p;
+                        break;
+                    }
+                }
+                if (project != null)
+                {
+                    // Update project's properties
+                    project.name = projectName;
+                    project.description = projectDesc;
+                    project.github_username = githubUser;
+                    project.github_reponame = githubRepo;
+                }
+                db.SaveChanges();
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
     #endregion
 
     #region USERS
+
+    /// <summary>
+    /// Gets given user from DB.
+    /// </summary>
+    public static user GetUser(string username)
+    {
+        try
+        {
+            using (var db = new atlasEntities())
+            {
+                foreach (var u in db.users)
+                {
+                    if (u.username == username)
+                        return u;
+                } 
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        return null;
+    }
 
     /// <summary>
     /// Gets all users from DB.

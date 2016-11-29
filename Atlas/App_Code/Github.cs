@@ -64,4 +64,31 @@ public class Github
         }
         return null;
     }
+
+    /// <summary>
+    /// Gets programming languages used in the project from Github.
+    /// </summary>
+    public static async Task<List<RepositoryLanguage>> GetLanguages(string user, string repo)
+    {
+        try
+        {
+            var client = new GitHubClient(new ProductHeaderValue("atlas"));
+            var languages = await client.Repository.GetAllLanguages(user, repo);
+            List<RepositoryLanguage> languageList = new List<RepositoryLanguage>();
+
+            if (languages != null && languages.Count > 0)
+            {
+                foreach (RepositoryLanguage l in languages)
+                {
+                    languageList.Add(l);
+                }
+                return languageList;
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        return null;
+    }
 }

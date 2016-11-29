@@ -69,12 +69,12 @@ public partial class Settings : System.Web.UI.Page
         if (activeProject != null)
         {     
             txtProjectName.Text = activeProject.name;
-            txtProjectDesc.Text = activeProject.description;
-            txtGithubUser.Text = activeProject.github_username;
+            if (!string.IsNullOrEmpty(activeProject.description))
+                txtProjectDesc.Text = activeProject.description;        
             if (!string.IsNullOrEmpty(activeProject.github_username))
-            { 
+                txtGithubUser.Text = activeProject.github_username;
+            if (!string.IsNullOrEmpty(activeProject.github_username) && !string.IsNullOrEmpty(activeProject.github_reponame))
                 UpdateRepoList();
-            }
         }
     }
 
@@ -92,7 +92,7 @@ public partial class Settings : System.Web.UI.Page
     }
 
     /// <summary>
-    /// Changes existing project's properties.
+    /// Saves changes to project's settings.
     /// </summary>
     protected void SaveChanges(string projectName, string projectDesc, string githubUser, string githubRepo)
     {
@@ -100,59 +100,24 @@ public partial class Settings : System.Web.UI.Page
             return;
         try
         {
-            using (var db = new atlasEntities())
+            // Update project's properties to DB
+            Database.UpdateProjectProperties(activeProject.id, projectName, projectDesc, githubUser, githubRepo);
+
+            // Change project to private/public
+            // Check if default-user has the project
+            bool found = Database.UserHasProject("Default", activeProject.id);
+
+            // User wants project to be public -> add it to default-user (if it's not there already)
+            if (!cbPrivateProject.Checked)
             {
-                project projectToChange = null;
-                // Find the active project from DB
-                foreach (project p in db.projects)
-                {
-                    if (p.id == activeProject.id)
-                    {
-                        projectToChange = p;
-                        break;
-                    }
-                }
-
-                // Update project's properties
-                projectToChange.name = projectName;
-                projectToChange.description = projectDesc;
-                projectToChange.github_username = githubUser;
-                projectToChange.github_reponame = githubRepo;
-
-                // Change project to private/public
-                user defaultUser = null;
-                foreach (var u in db.users)
-                {
-                    if (u.username == "Default")
-                    {
-                        defaultUser = u;
-                        break;
-                    }
-                }
-                if (defaultUser != null)
-                {
-                    // Check if default-user has the project
-                    bool found = false;
-                    foreach (project p in defaultUser.projects)
-                    {
-                        if (p.id == projectToChange.id)
-                            found = true;
-                    }
-
-                    // User wants project to be public -> add it to default-user (if it's not there already)
-                    if (!cbPrivateProject.Checked)
-                    {                      
-                        if (!found)
-                            defaultUser.projects.Add(projectToChange);
-                    }
-                    // User wants project to be private -> remove it from default-user (if it's there)
-                    else
-                    {
-                        if (found)
-                            defaultUser.projects.Remove(projectToChange);
-                    }
-                }
-                db.SaveChanges();
+                if (!found)
+                    Database.AddProjectToUser("Default", activeProject.id);
+            }
+            // User wants project to be private -> remove it from default-user (if it's there)
+            else
+            {
+                if (found)
+                    Database.RemoveProjectFromUser("Default", activeProject.id);
             }
             Response.Redirect("Home.aspx", true);
         }
@@ -170,6 +135,9 @@ public partial class Settings : System.Web.UI.Page
             ddlGithubRepo.Items.Clear();
     }
 
+    /// <summary>
+    /// Updates list of Github user's repositories when Github username is changed.
+    /// </summary>
     protected async void UpdateRepoList()
     {
         ddlGithubRepo.Items.Clear();
@@ -206,33 +174,10 @@ public partial class Settings : System.Web.UI.Page
     {
         try
         {
-            using (var db = new atlasEntities())
-            {
-                project projectToDelete = null;
-                // Find the active project from DB
-                foreach (project p in db.projects)
-                {
-                    if (p.id == activeProject.id)
-                    {
-                        projectToDelete = p;
-                        break;
-                    }
-                }
-
-                // Delete project's foreign key from all users
-                var users = db.users.ToList();
-                foreach (var u in users)
-                {
-                    u.projects.Remove(projectToDelete);
-                }
-
-                // Delete project
-                db.projects.Remove(projectToDelete);
-                db.SaveChanges();
-            }
+            Database.DeleteProject(activeProject.id);
             Session["ActiveProject"] = null;
             Response.Redirect("Home.aspx", true);
-        }
+        }    
         catch (Exception ex)
         {
             lblMessages.Text = ex.Message;

@@ -46,6 +46,8 @@
           <div class="col-sm-4">
             <asp:label cssclass="label label-danger" id="lblMessages" runat="server"></asp:label>
             <h1><asp:Label id="lblProjectName" runat="server" Text="Project name"></asp:Label></h1>
+            <!-- Programming languages -->
+            <div id="divLanguages" runat="server"></div><br />
             <blockquote><asp:Label id="lblProjectDesc" runat="server" Text="Project description"></asp:Label></blockquote>
             <!-- Pie charts -->
             <asp:Chart ID="usersPieChart" runat="server" /><br />

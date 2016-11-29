@@ -21,7 +21,7 @@ public partial class Home : System.Web.UI.Page
             {                
                 activeProject = Database.GetProjectFromDb(Convert.ToInt32(Session["ActiveProject"]));
 
-                // Pie chartit
+                // Pie charts
                 InitMainPieChart();
                 if (Session["LoggedUserId"] != null)
                 {
@@ -48,7 +48,6 @@ public partial class Home : System.Web.UI.Page
 
     protected void InitUserPieChart()
     {
-        // TODO: tarvitaan userin ID sessionista.
         var data = Database.GetProjectWorkingHoursForUser(Convert.ToInt32(Session["ActiveProject"]), Convert.ToInt32(Session["LoggedUserId"]));
 
         ChartArea chartArea = new ChartArea("ChartArea");
@@ -117,8 +116,10 @@ public partial class Home : System.Web.UI.Page
     protected async void InitGithub()
     {
         divCommitFeed.InnerHtml = "";
+        divLanguages.InnerHtml = "";
         try
         {
+            // Commit feed
             List<GitHubCommit> commits = await Github.GetCommits(activeProject.github_username, activeProject.github_reponame);
             if (commits != null && commits.Count > 0)
             {
@@ -128,10 +129,20 @@ public partial class Home : System.Web.UI.Page
                                                             c.Commit.Author.Date.DateTime.ToShortDateString(), c.Commit.Author.Name, c.HtmlUrl, c.Commit.Message);
                 }
             }
+
+            // Programming languages
+            List<RepositoryLanguage> languages = await Github.GetLanguages(activeProject.github_username, activeProject.github_reponame);
+            if (languages != null && languages.Count > 0)
+            {
+                foreach (RepositoryLanguage l in languages)
+                {
+                    divLanguages.InnerHtml += string.Format("<span class='label label-info' style='margin-right:5px'>{0}</span>", l.Name);
+                }
+            }
         }
         catch (Exception)
         {
-            lblMessages.Text = "Failed loading commits from Github!";
+            lblMessages.Text = "Failed loading stuff from Github! Probably API rate limit exceeded for your IP...";
         }
     }
 }
