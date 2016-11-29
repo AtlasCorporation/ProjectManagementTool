@@ -48,7 +48,7 @@
         </div>
     </div>
 </div>
-<div class="alert alert-info" id="divAlert" runat="server" visible="false"></div>
+<div class="alert alert-info w3-section w3-center" id="divAlert" runat="server" visible="false"></div>
 
 <!-- Confirm delete modal -->
 <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel">

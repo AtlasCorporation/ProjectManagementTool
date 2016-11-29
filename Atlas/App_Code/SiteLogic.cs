@@ -17,91 +17,179 @@ public class SiteLogic
     }
 
     public static string GetTasksJson(int projectId)
-    {
-        IEnumerable<donetask> donetasks;
+    {        
         IEnumerable<task> result = Database.GetProjectTasks(projectId);
         List<task> tasks = result.ToList();
+        List<Task> parsedTasks = ParseTasks(tasks);
+        // lisätään tilapäiset id:t ganttia varten
+        parsedTasks = AddGanttIds(parsedTasks);
+        parsedTasks = LinkGanttTasks(parsedTasks);
+        parsedTasks = Clean(parsedTasks);
+
+        return ParseTasksIntoJson(parsedTasks);        
+    }
+
+    protected static List<Task> ParseTasks(List<task> tasks)
+    {
+        IEnumerable<donetask> donetasks;
         List<Task> parsedTasks = new List<Task>();
 
-
-            for(int i = 0;i<tasks.Count();i++)
+        for (int i = 0; i < tasks.Count(); i++)
+        {
+            if (tasks.ElementAt(i).task_id == null)
             {
-                if(tasks.ElementAt(i).task_id == null)
+                parsedTasks.Add(new Task(tasks.ElementAt(i).id, tasks.ElementAt(i).name));
+                tasks.RemoveAt(i);
+                i--;
+            }
+        }
+
+        bool hasChild = false;
+
+
+        while (tasks.Count > 0)
+        {
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                for (int j = 0; j < parsedTasks.Count; j++)
                 {
-                    parsedTasks.Add(new Task(tasks.ElementAt(i).id, tasks.ElementAt(i).name));
+                    // onko vanhempaa
+                    if (tasks.ElementAt(i).task_id == parsedTasks.ElementAt(j).ID)
+                    {
+                        for (int k = 0; k < tasks.Count; k++)
+                        {
+                            // onko lapsia
+                            if (tasks.ElementAt(i).id == tasks.ElementAt(k).task_id)
+                            {
+                                // on, siirretään task parsittuihin ilman tuntitietoja
+                                parsedTasks.Add(new Task(tasks.ElementAt(i).id, tasks.ElementAt(i).name, parsedTasks.ElementAt(j).ID));
+                                tasks.RemoveAt(i);
+                                if (i == tasks.Count) { i--; }
+                                if (tasks.Count == 0) { break; }
+                                hasChild = true;
+                                break;
+                            }
+                        }
+                        if (tasks.Count == 0) { break; }
+                        if (!hasChild)
+                        {
+                            // ei lapsia, lisätään parsittuihin donetaskeina
+                            donetasks = Database.GetDonetasks(tasks.ElementAt(i).id);
+                            foreach (donetask dt in donetasks)
+                            {
+                                parsedTasks.Add(new Task(tasks.ElementAt(i).id, tasks.ElementAt(i).name, dt.date.Value.Day + "-" + dt.date.Value.Month + "-" + dt.date.Value.Year, dt.worktime, parsedTasks.ElementAt(j).ID));
+                            }
+                            tasks.RemoveAt(i);
+                            if (i == tasks.Count) { i--; }
+                            if (tasks.Count == 0) { break; }
+                        }
+                        hasChild = false;
+                    }
+                }
+                /*if (i < -1)
+                {
+                    i = -1;
+                }*/
+                if (tasks.Count == 0) { break; }
+            }
+        }
+
+        return parsedTasks;
+    }
+
+    // link tasks with their parents in gantt
+    protected static List<Task> LinkGanttTasks(List<Task> tasks)
+    {
+        foreach (Task item in tasks)
+        {
+            if (item.Parent != null)
+            {
+                item.GanttParentId = (from c in tasks where item.Parent == c.ID select c.GanttId).FirstOrDefault();
+            }
+        }
+        return tasks;
+    }
+
+    // add ids to tasks for gantt
+    protected static List<Task> AddGanttIds(List<Task> tasks)
+    {
+        int x = 1;
+        foreach (Task item in tasks)
+        {
+            item.GanttId = x;
+            x++;
+        }
+        return tasks;
+    }
+
+    // hävittää taskrakenteet joissa ei ole yhtään merkittyä tuntia
+    protected static List<Task> Clean(List<Task> tasks)
+    {
+        List<Task> tasksWithHours = new List<Task>();
+        List<Task> parsedTasks = new List<Task>();
+
+        // kerää taskit joihin on merkitty tunteja
+        for(int i = 0;i<tasks.Count;i++)
+        {
+            if(tasks.ElementAt(i).StartDate != null)
+            {
+                tasksWithHours.Add(tasks.ElementAt(i));
+                tasks.RemoveAt(i);
+                i--;
+                if (i == tasks.Count) { i = tasks.Count - 1; }
+                else if (i < 0) { i = 0; }
+            }
+        }
+
+        // kerää niiden taskien vanhemmat, joille on merkitty tunteja, erilliseen listaan
+        for (int i = 0; i < tasks.Count; i++)
+        {
+            for (int j = 0; j < tasksWithHours.Count; j++)
+            {
+                if (tasks.ElementAt(i).ID == tasksWithHours.ElementAt(j).Parent)
+                {
+                    parsedTasks.Add(tasks.ElementAt(i));
                     tasks.RemoveAt(i);
                     i--;
+                    if (i == tasks.Count) { i = tasks.Count - 1; }
+                    else if (i < 0) { i = 0; }
                 }
             }
+        }
 
-            bool hasChild = false;
-        
+        int initialCount;
 
-            while (tasks.Count > 0 )
+        // kerää vanhemmille vanhemmat
+        while(tasks.Count>0)
+        {
+            initialCount = tasks.Count;
+
+            for (int i = 0; i < tasks.Count; i++)
             {
-                for (int i = 0; i < tasks.Count; i++)
+                for (int j = 0; j < parsedTasks.Count; j++)
                 {
-                    for(int j = 0; j<parsedTasks.Count;j++)
+                    if (tasks.ElementAt(i).ID == parsedTasks.ElementAt(j).Parent)
                     {
-                        // onko vanhempaa
-                        if (tasks.ElementAt(i).task_id == parsedTasks.ElementAt(j).ID)
-                        {
-                            for(int k = 0;k<tasks.Count;k++)
-                            {
-                                // onko lapsia
-                                if(tasks.ElementAt(i).id == tasks.ElementAt(k).task_id)
-                                {
-                                    // on, siirretään task parsittuihin ilman tuntitietoja
-                                    parsedTasks.Add(new Task(tasks.ElementAt(i).id, tasks.ElementAt(i).name, parsedTasks.ElementAt(j).ID));
-                                    tasks.RemoveAt(i);
-                                    if (i == tasks.Count) { i--; }
-                                    if (tasks.Count == 0) { break; }
-                                    hasChild = true;
-                                    break;
-                                }
-                            }
-                            if (tasks.Count == 0) { break; }
-                            if (!hasChild)
-                            {
-                                // ei lapsia, lisätään parsittuihin donetaskeina
-                                donetasks = Database.GetDonetasks(tasks.ElementAt(i).id);
-                                foreach(donetask dt in donetasks)
-                                {
-                                    parsedTasks.Add(new Task(tasks.ElementAt(i).id, tasks.ElementAt(i).name, dt.date.Value.Day + "-" + dt.date.Value.Month + "-" + dt.date.Value.Year, dt.worktime, parsedTasks.ElementAt(j).ID));
-                                }
-                                tasks.RemoveAt(i);
-                                if(i == tasks.Count) { i--; }
-                                if (tasks.Count == 0) { break; }
-                            }
-                            hasChild = false;
-                        }
+                        parsedTasks.Add(tasks.ElementAt(i));
+                        tasks.RemoveAt(i);
+                        i--;
+                        if(i == tasks.Count) { i = tasks.Count - 1; }
+                        else if (i < 0) { i = 0; }
                     }
-                    if(i < -1)
-                    {
-                        i = -1;
-                    }
-                    if (tasks.Count == 0) { break; }
                 }
             }
-            // lisätään tilapäiset id:t ganttia varten
-            int x = 1;
-            foreach(Task item in parsedTasks)
+            // varmistetaan ettei tule loputon loop
+            if (initialCount == tasks.Count)
             {
-                item.GanttId = x;
-                x++;
+                break;
             }
+        }
 
-            foreach(Task item in parsedTasks)
-            {
-                if(item.Parent != null)
-                {
-                    item.GanttParentId = (from c in parsedTasks where item.Parent == c.ID select c.GanttId).FirstOrDefault();
-                }
-            }
+        //yhdistää listat
+        parsedTasks = parsedTasks.Union(tasksWithHours).ToList();
 
-            return ParseTasksIntoJson(parsedTasks);        
+        return parsedTasks;
         
-
     }
 
     protected static string ParseTasksIntoJson(List<Task> tasks)

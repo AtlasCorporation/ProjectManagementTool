@@ -6,7 +6,7 @@
     <div id="divAccountCreated" class="alert alert-success" style="display: none;" runat="server">
         <strong>Account created successfully!</strong> Please login below.
     </div>
-    <div class="panel panel-default">      
+    <div class="panel panel-default w3-section">      
     <div class="panel-heading"><strong>Login</strong></div>
         <div class="panel-body">
             <div class="form-horizontal">

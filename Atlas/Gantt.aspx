@@ -5,14 +5,15 @@
     <link href="Content/dhtmlxgantt/dhtmlxgantt_broadway.css" rel="stylesheet" />
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">
-    <div runat="server" id="reminderDiv" class="alert alert-info" visible="false">
-        <asp:Label runat="server" ID="lblReminder" Text="<strong>Select a project!</strong> Please select a project first to show the GANTT-chart." />     
+    <div runat="server" id="reminderDiv" class="alert alert-info w3-section w3-center" visible="false">
+        <asp:Label runat="server" ID="lblReminder" Text="<strong>Please select a project first to show the gantt-chart!</strong>" />     
     </div> 
     <div runat="server" id="mainDiv" visible="true">
-        <div id="ganttDiv"  style='width:100%; min-height:400px;'>
+        <div id="ganttDiv" class="w3-section">
             <script type="text/javascript">    
                // gantt.config.subscales = [{ unit: "hour", step: 12, date: "%H:%i" }];
                 gantt.config.duration_unit = "hour";
+                gantt.config.autosize = true;
                 gantt.config.duration_step = 1;
                 gantt.config.readonly = true;
                 gantt.config.skip_off_time = true;
