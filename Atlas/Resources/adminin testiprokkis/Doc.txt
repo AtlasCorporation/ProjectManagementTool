@@ -1,10 +1,12 @@
-Heading
+Header
 =======
 
-Sub-heading
+Sub-header
 -----------
-
-### DummyFile
+# Different size header
+## Different size header
+### Different size header
+#### Different size header
 
 Paragraphs are separated
 by a blank line.
@@ -28,3 +30,11 @@ Numbered list:
 1. apples
 2. oranges
 3. pears
+
+Table
+
+|-----Section A-----| ------Section B----- | ------Section C-----| -----Section D----- |
+|:---:|:---:|:---:|:---:|
+| - | - | - | - |
+| - | - | - | - |
+| - | - | - | - |

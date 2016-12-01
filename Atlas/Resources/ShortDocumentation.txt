@@ -1,13 +1,10 @@
-Heading
+Project name
 =======
 
-Sub-heading
+Description
 -----------
 
-### DummierFile
-
-Paragraphs are separated
-by a blank line.
+Write your description here!
 
 Leave 2 spaces at the end of a line to do a  
 line break
@@ -17,7 +14,7 @@ Text attributes *italic*, **bold**,
 
 A [link](http://example.com).
 
-Shopping list:
+Bullet list:
 
 * apples
 * oranges
@@ -28,3 +25,15 @@ Numbered list:
 1. apples
 2. oranges
 3. pears
+
+Functionality
+-------------
+
+Write some functionality...  
+and perhaps some description about it.
+
+My own opinion
+--------------
+
+Well you know what to do!
+
