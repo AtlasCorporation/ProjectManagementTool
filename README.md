@@ -9,9 +9,10 @@ Tunnit:
 * 18.11 - 6,5h Projektien muokkaus ja poistaminen, private/public projektit
 * 23.11 - 1h Commit feedin aloitus
 * 23.11 - 3h Merge ja suunnittelu
-* 24.11 - 2h Projektien lisäys ja listaus kirjautuneen käyttäjän perusteella
+* 24.11 - 3h Projektien lisäys ja listaus kirjautuneen käyttäjän perusteella
 * 25.11 - 3,5h Ulkoasuun parannuksia, commit feedi loppuun
 * 26.11 - 8h Authorisointi, käyttäjien roolit projektikohtaisesti, autentikointiin muutoksia, käyttäjien lisääminen projektiin
 * 30.11 - 6h Projektikohtainen dokumentaatio, dokumentaation authorisointi, Github API:sta koodikielet, viimeistelyä
+* 2.12 - 1h Dokumentointi
 
-**= yht. 48h**
+**= yht. 50h**
