@@ -17,12 +17,14 @@ blablbalalbalabalbal...
 ...blbalblalbalba
 
 ###Functionalities
+
     - Feature a
     - Feature b
     - Feature c
     - Feature d
 
 ###Non-functionalities
+
     - Feature a
     - Feature b
     - Feature c

@@ -168,6 +168,7 @@ public class SiteLogic
             {
                 for (int j = 0; j < parsedTasks.Count; j++)
                 {
+                    try { 
                     if (tasks.ElementAt(i).ID == parsedTasks.ElementAt(j).Parent)
                     {
                         parsedTasks.Add(tasks.ElementAt(i));
@@ -175,6 +176,11 @@ public class SiteLogic
                         i--;
                         if(i == tasks.Count) { i = tasks.Count - 1; }
                         else if (i < 0) { i = 0; }
+                    }
+                    }
+                    catch(Exception e)
+                    {
+                        System.Diagnostics.Debug.WriteLine("EXCEPTION" + e.Message);
                     }
                 }
             }
