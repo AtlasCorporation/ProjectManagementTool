@@ -136,8 +136,9 @@ public class SiteLogic
                 tasksWithHours.Add(tasks.ElementAt(i));
                 tasks.RemoveAt(i);
                 i--;
-                if (i == tasks.Count) { i = tasks.Count - 1; }
+                if (i >= tasks.Count) { i = tasks.Count - 1; }
                 else if (i < 0) { i = 0; }
+                if (tasks.Count == 0) { break; }
             }
         }
 
@@ -151,10 +152,12 @@ public class SiteLogic
                     parsedTasks.Add(tasks.ElementAt(i));
                     tasks.RemoveAt(i);
                     i--;
-                    if (i == tasks.Count) { i = tasks.Count - 1; }
+                    if (i >= tasks.Count) { i = tasks.Count - 1; }
                     else if (i < 0) { i = 0; }
+                    if (tasks.Count == 0) { break; }
                 }
             }
+            if (tasks.Count == 0) { break; }
         }
 
         int initialCount;
@@ -173,10 +176,12 @@ public class SiteLogic
                         parsedTasks.Add(tasks.ElementAt(i));
                         tasks.RemoveAt(i);
                         i--;
-                        if(i == tasks.Count) { i = tasks.Count - 1; }
+                        if (i >= tasks.Count) { i = tasks.Count - 1; }
                         else if (i < 0) { i = 0; }
+                        if (tasks.Count == 0) { break; }
                     }
                 }
+                if (tasks.Count == 0) { break; }
             }
             // varmistetaan ettei tule loputon loop
             if (initialCount == tasks.Count)
