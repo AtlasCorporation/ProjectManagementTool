@@ -18,8 +18,18 @@
             <div class="w3-center alert-info">
                     <asp:Label runat="server" Text="Selected task:" />
                     <asp:Label runat="server" ID="lblSelectedTask" Text="None selected" />
-                </div>
+            </div>
             <div class="w3-content w3-center w3-padding-medium w3-twothird">
+                <!-- DONETASKS GRID VIEW -->
+                <div class="w3-content" style="float:right;">
+                    <asp:GridView runat="server" ID="gvDonetasks" AutoGenerateColumns="false" >
+                    <Columns>                  
+                      <asp:BoundField DataField="id" Visible="false" ReadOnly="true" />
+                      <asp:BoundField DataField="worktime" HeaderText="Duration" ReadOnly="true"/>
+                      <asp:BoundField DataField="date" HeaderText="Starting date and time" ReadOnly="true" />
+                    </Columns> 
+                    </asp:GridView>
+               </div>
                 <div runat="server" id="virginDiv" visible="false" class="w3-padding">                
                     <asp:Label runat="server" Text="Create a new task" />   
                     <div class="w3-content form-horizontal">
@@ -31,37 +41,54 @@
                     <asp:Button cssclass="btn btn-success" runat="server" Text="Add task" ID="btnVirginTask" OnClick="btnVirginTask_Click" />
                 </div>
                 <div runat="server" id="taskControlDiv" class="w3-container">
-                    <div>
+                    <div style="margin-bottom:5%;">
                         <asp:TreeView runat="server" ID="twTasks" OnSelectedNodeChanged="twTasks_SelectedNodeChanged"/>
-                    </div>                
-                    <asp:Button cssclass="btn btn-success" runat="server" Text="Add task" ID="btnShowAddTask" OnClick="btnShowAddTask_Click" />
-                    <asp:Button cssclass="btn btn-danger" runat="server" Text="Delete task" ID="btnShowDeleteTask" OnClick="btnShowDeleteTask_Click" />
-            
-                    <div runat="server" id="addTaskDiv" visible="false" class="w3-container">  
+                    </div> 
+                    
+                    <!-- Add popup -->
+                    <div runat="server" id="addTaskDiv" visible="false" class="w3-container w3-left" style="margin-top:10%; width:60%; float:left;">  
                         <asp:Label runat="server" Text="Name of the new task:" />                
                         <asp:TextBox runat="server" cssclass="form-control" placeholder="Enter task name" ID="tbTaskName" />
                         <!--<asp:RequiredFieldValidator runat="server" ControlToValidate="tbTaskName" Text="Required field!" />-->
                         <br />
                          <asp:CheckBox runat="server" Text="Create root task" ID="cbIsRoot" OnCheckedChanged="cbIsRoot_CheckedChanged" AutoPostBack="true" />
                         <div runat="server" id="parentSelectionDiv">                            
-                            <asp:Label runat="server" Text="Parent task:" />
+                            <asp:Label runat="server" ID="lblparentTask" Text="Parent task:" />
+                            <asp:Label runat="server" ID="lblNewRootTask" Text="Creating new root task..." />
                             <asp:Label runat="server" ID="lblParent" Text="None selected" />
                         </div>                       
-                        <div class="w3-content w3-margin">
-                            <asp:Button cssclass="btn btn-success" runat="server" ID="btnAddTask" Text="Ok"  OnClick="btnAddTask_Click"/>
+                        <div class="w3-content w3-margin" style="float:left;">
+                            <asp:Button cssclass="btn btn-success" cssstyle="float:left;" runat="server" ID="btnAddTask" Text="Ok"  OnClick="btnAddTask_Click"/>
                             <asp:Button cssclass="btn btn-warning" runat="server" ID="btnCancelAddTask" Text="Cancel" OnClick="btnCancelAddTask_Click" />    
                         </div>     
                     </div>
-                    <div runat="server" id="removeTaskDiv" visible="false" class="w3-container">
+                    <!-- Remove popup -->
+                    <div runat="server" id="removeTaskDiv" visible="false" class="w3-container w3-left" style="width:60%; float:left;">
                         <asp:Label runat="server" Text="Are you sure you want to delete the task? It may contain logged hours." />
-                        <div class="w3-content">                        
+                        <br />
+                        <div class="w3-content w3-left">                        
                             <asp:Button cssclass="btn btn-danger" runat="server" ID="btnConfirmDelete" Text="Yes, delete anyway"  OnClick="btnConfirmDelete_Click" />
                             <asp:Button cssclass="btn btn-warning" runat="server" ID="btnCancelDelete" Text="Cancel" OnClick="btnCancelDelete_Click" />  
                         </div>  
                     </div>
-                </div>
-            </div>   
-            <div class="w3-third w3-content w3-center w3-padding-medium">
+                    <!-- ADD/DEL -->
+                    <div runat="server" class="w3-container w3-left" style="width:60%; float:left;">
+                        <div class="w3-content w3-left" style="margin-top:1%; margin-bottom:1%;">                        
+                              <asp:Button cssclass="btn btn-success" runat="server" Text="Add task" ID="btnShowAddTask" OnClick="btnShowAddTask_Click" />
+                              <asp:Button cssclass="btn btn-danger" runat="server" Text="Delete task" ID="btnShowDeleteTask" OnClick="btnShowDeleteTask_Click" />
+                        </div>  
+                    </div>
+
+                    <!-- Add USER to project -->
+                    <div class="w3-container w3-left" style="width:60%; float:left;">
+                        <div class="w3-content w3-left" style="margin-top:1%; margin-bottom:1%;">         
+                               <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addUsers">Add users to this project</button><br />
+                               <asp:Label runat="server" ID="lblHelp" Text="" />                
+                        </div>   
+                    </div>
+             </div>
+        </div>   
+            <div class="w3-third w3-content w3-center w3-padding-medium" style="display:block">
                 <div class="w3-container">
                     <asp:Calendar runat="server" ID="calendar" CssClass="calendar" />                 
                     <div class="w3-content">
@@ -83,19 +110,9 @@
                 <asp:Button cssclass="btn btn-success" runat="server" ID="btnLogHours" Text="Save work"  OnClick="btnLogHours_Click" Enabled="true"/>
                 <br />
                 <asp:Label runat="server" ID="lblConfirmSave" />        
-            </div>               
-            <asp:GridView runat="server" ID="gvDonetasks" AutoGenerateColumns="false" >
-                <Columns>                  
-                  <asp:BoundField DataField="id" Visible="false" ReadOnly="true" />
-                  <asp:BoundField DataField="worktime" HeaderText="Duration" ReadOnly="true"/>
-                  <asp:BoundField DataField="date" HeaderText="Starting date and time" ReadOnly="true" />
-                </Columns> 
-            </asp:GridView>
+                
+            </div>                           
         </div>
-        <div class="w3-center w3-content">
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addUsers">Add users to this project</button><br />
-            <asp:Label runat="server" ID="lblHelp" Text="..." />                
-        </div>   
     </div>
 
 <!-- Add users modal -->
