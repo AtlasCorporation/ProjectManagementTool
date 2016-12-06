@@ -16,6 +16,14 @@ public partial class Documentation : System.Web.UI.Page
         btnEdit.Visible = false;
         btnSave.Visible = false;
         btnCancel.Visible = false;
+        ddlSelectTemplate.Visible = false;
+        lblTemplate.Visible = false;
+        btnSave.Visible = false;
+
+        if (!IsPostBack)
+        {
+            dh.readTemplates(ddlSelectTemplate, Server.MapPath("~/Resources"));
+        }
 
         if (Session["ActiveProject"] != null)
         {
@@ -26,8 +34,11 @@ public partial class Documentation : System.Web.UI.Page
             List<string> authorizedRolesToEditDocs = new List<string> { "user", "admin" };
             if (Session["LoggedUserId"] != null)
             {
-                if (Authorizer.CheckUserRoleForProject(Convert.ToInt32(Session["LoggedUserId"]), authorizedRolesToEditDocs, Convert.ToInt32(Session["ActiveProject"])))
+                if (Authorizer.CheckUserRoleForProject(Convert.ToInt32(Session["LoggedUserId"]), authorizedRolesToEditDocs, Convert.ToInt32(Session["ActiveProject"]))) { 
                     btnEdit.Visible = true; // Allow edit if logged-in user has role "user" or "admin"
+                    ddlSelectTemplate.Visible = true;
+                    lblTemplate.Visible = true;
+                }
             }
 
             // Create folder for active project if it doesn't exist already
@@ -57,6 +68,8 @@ public partial class Documentation : System.Web.UI.Page
         btnEdit.Visible = true;
         btnSave.Visible = false;
         btnCancel.Visible = false;
+        ddlSelectTemplate.Visible = true;
+        lblTemplate.Visible = true;
         string path = Server.MapPath("~/Resources/" + activeProjectName + "/Doc.txt");
         dh.SaveFile(path, ModeText);
         Response.Redirect(Request.RawUrl);
@@ -69,7 +82,16 @@ public partial class Documentation : System.Web.UI.Page
         btnEdit.Visible = false;
         btnSave.Visible = true;
         btnCancel.Visible = true;
-        string path = Server.MapPath("~/Resources/" + activeProjectName + "/Doc.txt");
+        ddlSelectTemplate.Visible = false;
+        lblTemplate.Visible = false;
+        string path = "";
+        if (ddlSelectTemplate.SelectedIndex > 0)
+        {
+            path = Server.MapPath("~/Resources/" + ddlSelectTemplate.Items[ddlSelectTemplate.SelectedIndex].Value.ToString());
+        }
+        else {
+            path = Server.MapPath("~/Resources/" + activeProjectName + "/Doc.txt");
+        }
         ModeText.Text = dh.EditFile(path);
     }
 
@@ -80,6 +102,8 @@ public partial class Documentation : System.Web.UI.Page
         btnSave.Visible = false;
         btnCancel.Visible = false;
         ModeText.Visible = false;
+        ddlSelectTemplate.Visible = true;
+        lblTemplate.Visible = true;
     }
     private void btnVisibility()
     {

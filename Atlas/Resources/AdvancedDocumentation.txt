@@ -1,0 +1,39 @@
+Project name
+============
+
+Introduction
+-------
+
+Assignment
+-----------------
+
+Use case
+------------
+
+Priority
+------------
+
+Used technologies
+---------------
+
+Usage
+---------------
+
+About the program
+-----------------
+
+##Structure
+
+###Relationships
+
+###Logical path of the program
+
+##Classes and their meanings
+
+##Functionality
+
+Quality assurance
+-----------------
+
+Analysis
+-------

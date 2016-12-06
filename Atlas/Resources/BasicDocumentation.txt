@@ -1,0 +1,63 @@
+Project name
+============
+
+Install
+-------
+
+- step a
+- step b
+    - step b.1
+    - step b.2
+    - step b.3
+
+About the program
+-----------------
+
+blablbalalbalabalbal...  
+...blbalblalbalba
+
+###Functionalities
+
+    - Feature a
+    - Feature b
+    - Feature c
+    - Feature d
+
+###Non-functionalities
+
+    - Feature a
+    - Feature b
+    - Feature c
+    - Feature d
+
+Future plans
+------------
+
+blbalalblaablalblabl...  
+..lbbalblalballablablablabl...  
+..lbblablalbalalablballbalbal
+
+System requirements
+------------
+    - Requirement a
+    - Requirement b
+    - Requirement c
+    - Requirement d
+    - Requirement e
+
+Project members
+---------------
+
+    - Member a
+    - Member b
+    - Member c
+
+Time management
+---------------
+
+|-----Task-----| ------Member A----- | ------Member B-----| -----Member C----- |
+|:---:|:---:|:---:|:---:|
+| Task 1 | 0h | 0h | 0h|
+| Task 2 | 0h| 0h | 0h |
+| Task 3 | 0h | 0h | 0h |
+

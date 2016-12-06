@@ -63,4 +63,16 @@ public class DocumentHandler
 
         }
     }
+    public void readTemplates(DropDownList ddl, string path)
+    {
+        DirectoryInfo d = new DirectoryInfo(path);//Checking resource folder
+        FileInfo[] Files = d.GetFiles("*.txt"); //Getting Text files
+        string temp = "";
+        ddl.Items.Insert(0, string.Empty);
+        foreach (FileInfo file in Files)
+        {
+            temp = file.Name.Replace(".txt", "");
+            ddl.Items.Add(new ListItem(temp, file.Name));
+        }
+    }
 }

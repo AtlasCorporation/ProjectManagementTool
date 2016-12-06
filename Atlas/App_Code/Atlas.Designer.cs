@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\Prometheus\Documents\GitHub\ProjectManagementTool\Atlas\App_Code\Atlas.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Users\Olli\Documents\GitHub\ProjectManagementTool\Atlas\App_Code\Atlas.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.
