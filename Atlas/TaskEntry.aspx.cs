@@ -119,8 +119,16 @@ public partial class TaskEntry : System.Web.UI.Page
     {
         lblSelectedTask.Text = twTasks.SelectedNode.Text;
         lblParent.Text = twTasks.SelectedNode.Text;
+        btnShowAddTask.Text = "Add task to " + twTasks.SelectedNode.Text;
+        btnShowDeleteTask.Text = "Delete task " + twTasks.SelectedNode.Text;
 
         ShowDonetasks();
+    }
+
+    private void selectionsVisibility()
+    {
+        btnShowAddTask.Visible = !btnShowAddTask.Visible;
+        btnShowDeleteTask.Visible = !btnShowDeleteTask.Visible;
     }
 
     protected void btnShowAddTask_Click(object sender, EventArgs e)
@@ -129,6 +137,7 @@ public partial class TaskEntry : System.Web.UI.Page
         btnShowAddTask.Enabled = false;
         removeTaskDiv.Visible = false;
         btnShowDeleteTask.Enabled = true;
+        selectionsVisibility();
     }
 
     protected void btnVirginTask_Click(object sender, EventArgs e)
@@ -197,6 +206,7 @@ public partial class TaskEntry : System.Web.UI.Page
                             ResetContent();
                             twTasks.Nodes.Clear();
                             BuildTaskTree();
+                            selectionsVisibility();
                         }
                         else
                         {
@@ -215,6 +225,7 @@ public partial class TaskEntry : System.Web.UI.Page
                                 ResetContent();
                                 twTasks.Nodes.Clear();
                                 BuildTaskTree();
+                                selectionsVisibility();
                             }
                             else
                             {
@@ -252,6 +263,7 @@ public partial class TaskEntry : System.Web.UI.Page
     protected void btnCancelAddTask_Click(object sender, EventArgs e)
     {
         ResetContent();
+        selectionsVisibility();
     }
 
     protected void btnLogHours_Click(object sender, EventArgs e)
@@ -333,11 +345,13 @@ public partial class TaskEntry : System.Web.UI.Page
         ResetContent();
         twTasks.Nodes.Clear();
         BuildTaskTree();
+        selectionsVisibility();
     }
 
     protected void btnCancelDelete_Click(object sender, EventArgs e)
     {
         ResetContent();
+        selectionsVisibility();
     }
 
     protected void btnShowDeleteTask_Click(object sender, EventArgs e)
@@ -350,6 +364,7 @@ public partial class TaskEntry : System.Web.UI.Page
                 addTaskDiv.Visible = false;
                 btnShowDeleteTask.Enabled = false;
                 btnShowAddTask.Enabled = true;
+                selectionsVisibility();
             }
             else
             {
@@ -360,17 +375,22 @@ public partial class TaskEntry : System.Web.UI.Page
         {
             lblHelp.Text = "Select a task to delete!";
         }
+
     }
 
     protected void cbIsRoot_CheckedChanged(object sender, EventArgs e)
     {
         if(cbIsRoot.Checked)
         {
-            parentSelectionDiv.Visible = false;
+            lblparentTask.Visible = false;
+            lblNewRootTask.Visible = true;
+            lblParent.Visible = false;
         }
         else
         {
-            parentSelectionDiv.Visible = true;
+            lblparentTask.Visible = true;
+            lblNewRootTask.Visible = false;
+            lblParent.Visible = true;
         }
     }
 
