@@ -54,7 +54,7 @@
                          <asp:CheckBox runat="server" Text="Create root task" ID="cbIsRoot" OnCheckedChanged="cbIsRoot_CheckedChanged" AutoPostBack="true" />
                         <div runat="server" id="parentSelectionDiv">                            
                             <asp:Label runat="server" ID="lblparentTask" Text="Parent task:" />
-                            <asp:Label runat="server" ID="lblNewRootTask" Text="Creating new root task..." />
+                           <!-- <asp:Label runat="server" ID="lblNewRootTask" Text="Creating a new root task" /> -->
                             <asp:Label runat="server" ID="lblParent" Text="None selected" />
                         </div>                       
                         <div class="w3-content w3-margin" style="float:left;">
@@ -107,7 +107,7 @@
                     <asp:DropDownList runat="server" ID="ddlWorkTime" />
                 </div>
                 <br />
-                <asp:Button cssclass="btn btn-success" runat="server" ID="btnLogHours" Text="Save work"  OnClick="btnLogHours_Click" Enabled="true"/>
+                <asp:Button cssclass="btn btn-success" runat="server" ID="btnLogHours" Text="Save work"  OnClick="btnLogHours_Click" Enabled="false"/>
                 <br />
                 <asp:Label runat="server" ID="lblConfirmSave" />        
                 

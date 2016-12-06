@@ -121,6 +121,8 @@ public partial class TaskEntry : System.Web.UI.Page
         lblParent.Text = twTasks.SelectedNode.Text;
         btnShowAddTask.Text = "Add task to " + twTasks.SelectedNode.Text;
         btnShowDeleteTask.Text = "Delete task " + twTasks.SelectedNode.Text;
+        btnLogHours.Enabled = true;
+        btnLogHours.Text = "Save work to " + twTasks.SelectedNode.Text;
 
         ShowDonetasks();
     }
@@ -383,13 +385,13 @@ public partial class TaskEntry : System.Web.UI.Page
         if(cbIsRoot.Checked)
         {
             lblparentTask.Visible = false;
-            lblNewRootTask.Visible = true;
+           // lblNewRootTask.Visible = true;
             lblParent.Visible = false;
         }
         else
         {
             lblparentTask.Visible = true;
-            lblNewRootTask.Visible = false;
+            //lblNewRootTask.Visible = false;
             lblParent.Visible = true;
         }
     }
