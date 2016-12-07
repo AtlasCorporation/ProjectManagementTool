@@ -14,5 +14,6 @@ Tunnit:
 * 26.11 - 8h Authorisointi, käyttäjien roolit projektikohtaisesti, autentikointiin muutoksia, käyttäjien lisääminen projektiin
 * 30.11 - 6h Projektikohtainen dokumentaatio, dokumentaation authorisointi, Github API:sta koodikielet, viimeistelyä
 * 2.12 - 1h Dokumentointi
+* 7.12 - 5h UI parannuksia (date ja clock picker yms)
 
-**= yht. 50h**
+**= yht. 55h**
