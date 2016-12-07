@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -43,27 +44,27 @@ public partial class TaskEntry : System.Web.UI.Page
         BuildTaskTree();
         twTasks.CollapseAll();
 
-        hours = new List<string>();
-        for(int i = 0;i<24;i++)
-        {
-            if(i<10){ hours.Add("0" + i); }
-            else { hours.Add("" + i);}            
-        }
+        //hours = new List<string>();
+        //for(int i = 0;i<24;i++)
+        //{
+        //    if(i<10){ hours.Add("0" + i); }
+        //    else { hours.Add("" + i);}            
+        //}
 
-        ddlHours.DataSource = hours;
-        ddlHours.DataBind();
-        ddlHours.SelectedIndex = 8;
+        //ddlHours.DataSource = hours;
+        //ddlHours.DataBind();
+        //ddlHours.SelectedIndex = 8;
 
-        minutes = new List<string>();
+        //minutes = new List<string>();
 
-        for(int i = 0;i<60;i++)
-        {
-            if (i < 10){ minutes.Add("0" + i); }
-            else { minutes.Add("" + i); }
-        }
+        //for(int i = 0;i<60;i++)
+        //{
+        //    if (i < 10){ minutes.Add("0" + i); }
+        //    else { minutes.Add("" + i); }
+        //}
 
-        ddlMinutes.DataSource = minutes;
-        ddlMinutes.DataBind();
+        //ddlMinutes.DataSource = minutes;
+        //ddlMinutes.DataBind();
 
         hours = new List<string>();
 
@@ -74,9 +75,8 @@ public partial class TaskEntry : System.Web.UI.Page
 
         ddlWorkTime.DataSource = hours;
         ddlWorkTime.DataBind();
-
-        calendar.VisibleDate = DateTime.Now;
-        calendar.SelectedDate = DateTime.Now;
+        txtDate.Text = DateTime.Now.ToString("dd.MM.yyyy");
+        txtStartingTime.Text = DateTime.Now.ToString(@"hh\:mm");
     }
         
     protected void BuildTaskTree()
@@ -191,7 +191,6 @@ public partial class TaskEntry : System.Web.UI.Page
 
     protected void btnAddTask_Click(object sender, EventArgs e)
     {       
-
         if(Session["ActiveProject"] != null)
         {
             if (Session["LoggedUser"] != null)
@@ -280,15 +279,22 @@ public partial class TaskEntry : System.Web.UI.Page
                     {
                         if(twTasks.SelectedNode.Parent != null)
                         {
-                            int workingHours = Convert.ToInt32(ddlWorkTime.Text);
-                            DateTime dateTime = new DateTime(calendar.SelectedDate.Year, calendar.SelectedDate.Month, calendar.SelectedDate.Day, Convert.ToInt32(ddlHours.Text), Convert.ToInt32(ddlMinutes.Text), 0);
-
-                            int result = Database.AddDonetask(Convert.ToInt32(twTasks.SelectedNode.Value), Convert.ToInt32(Session["LoggedUserId"]), workingHours, dateTime);
-                            if (result != 0)
+                            if (!string.IsNullOrEmpty(txtDate.Text) && !string.IsNullOrEmpty(txtStartingTime.Text))
                             {
-                                lblConfirmSave.Text = "Saved! Task: " + twTasks.SelectedNode.Text + ", user: " + Session["LoggedUser"] + ", hours: " + ddlWorkTime.Text + ", started at: " + dateTime;
+                                int workingHours = Convert.ToInt32(ddlWorkTime.Text);
+                                DateTime selectedDate = DateTime.ParseExact(txtDate.Text, "dd.MM.yyyy", CultureInfo.CurrentCulture);
+                                TimeSpan selectedTime = TimeSpan.ParseExact(txtStartingTime.Text, @"hh\:mm", CultureInfo.InvariantCulture);
+                                DateTime dateTime = new DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, Convert.ToInt32(selectedTime.Hours), Convert.ToInt32(selectedTime.Minutes), 0);
+
+                                int result = Database.AddDonetask(Convert.ToInt32(twTasks.SelectedNode.Value), Convert.ToInt32(Session["LoggedUserId"]), workingHours, dateTime);
+                                if (result != 0)
+                                {
+                                    lblConfirmSave.Text = "Saved! Task: " + twTasks.SelectedNode.Text + ", user: " + Session["LoggedUser"] + ", hours: " + ddlWorkTime.Text + ", started at: " + dateTime;
+                                    ShowDonetasks();
+                                }
+                                else lblConfirmSave.Text = "Tallennus epäonnistui!";
                             }
-                            else lblConfirmSave.Text = "Tallennus epäonnistui!";
+                            else lblHelp.Text = "Enter date and starting time!";
                         }
                         else
                         {
@@ -318,25 +324,6 @@ public partial class TaskEntry : System.Web.UI.Page
             lblHelp.Text = "Login first!";
             lblSelectedTask.Text = string.Empty;
         }        
-    }
-
-    protected void btnCalendarBack_Click(object sender, EventArgs e)
-    {
-        if (calendar.VisibleDate == DateTime.MinValue)
-        {
-            calendar.VisibleDate = DateTime.Now;
-        }
-        calendar.VisibleDate = calendar.VisibleDate.AddYears(-1);
-    }
-
-    protected void btnCalendarForward_Click(object sender, EventArgs e)
-    {
-        if (calendar.VisibleDate == DateTime.MinValue)
-        {
-            calendar.VisibleDate = DateTime.Now;
-        }
-
-        calendar.VisibleDate = calendar.VisibleDate.AddYears(1);
     }
 
     protected void btnConfirmDelete_Click(object sender, EventArgs e)

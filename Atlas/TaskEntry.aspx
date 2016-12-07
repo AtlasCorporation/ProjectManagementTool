@@ -1,13 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="TaskEntry.aspx.cs" Inherits="TaskEntry" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
-    <style>
-        .calendar {
-            display: block; 
-            width: 200px;
-            margin: 0 auto;
-        }
-    </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="body" Runat="Server">   
     <div runat="server" id="reminderDiv" class="alert alert-info w3-section w3-center">
@@ -22,7 +15,7 @@
             <div class="w3-content w3-center w3-padding-medium w3-twothird">
                 <!-- DONETASKS GRID VIEW -->
                 <div class="w3-content" style="float:right;">
-                    <asp:GridView runat="server" ID="gvDonetasks" AutoGenerateColumns="false" >
+                    <asp:GridView runat="server" ID="gvDonetasks" AutoGenerateColumns="false" CssClass="table" GridLines="None">
                     <Columns>                  
                       <asp:BoundField DataField="id" Visible="false" ReadOnly="true" />
                       <asp:BoundField DataField="worktime" HeaderText="Duration" ReadOnly="true"/>
@@ -82,35 +75,42 @@
                     <!-- Add USER to project -->
                     <div class="w3-container w3-left" style="width:60%; float:left;">
                         <div class="w3-content w3-left" style="margin-top:1%; margin-bottom:1%;">         
-                               <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addUsers">Add users to this project</button><br />
+                               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUsers">Add users to this project</button><br />
                                <asp:Label runat="server" ID="lblHelp" Text="" />                
                         </div>   
                     </div>
              </div>
         </div>   
             <div class="w3-third w3-content w3-center w3-padding-medium" style="display:block">
-                <div class="w3-container">
-                    <asp:Calendar runat="server" ID="calendar" CssClass="calendar" />                 
-                    <div class="w3-content">
-                        <asp:Button cssclass="btn" runat="server" ID="btnCalendarBack" Text="< Year" OnClick="btnCalendarBack_Click" />
-                        <asp:Button cssclass="btn" runat="server" ID="btnCalendarForward" Text="Year >"  OnClick="btnCalendarForward_Click"/>    
-                    </div>    
-                </div>
-                <div class="w3-content">
-                    <asp:Label runat="server" Text="Starting time:" />
-                    <asp:DropDownList runat="server" ID="ddlHours" />
-                    <asp:Label runat="server" Text=":" />
-                    <asp:DropDownList runat="server" ID="ddlMinutes" />
-                </div>
-                <div class="w3-content">
-                    <asp:Label runat="server" Text="Hours worked" />
-                    <asp:DropDownList runat="server" ID="ddlWorkTime" />
-                </div>
-                <br />
-                <asp:Button cssclass="btn btn-success" runat="server" ID="btnLogHours" Text="Save work"  OnClick="btnLogHours_Click" Enabled="false"/>
-                <br />
-                <asp:Label runat="server" ID="lblConfirmSave" />        
-                
+            <div class="form-horizontal">
+                    <div class="form-group">
+                        <label for="txtDate" class="control-label col-xs-6">Date</label>
+                        <div class='input-group date' id='datepicker'>
+                            <asp:TextBox ID="txtDate" runat="server" CssClass="form-control"></asp:TextBox>
+                            <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtStartingTime" class="control-label col-xs-6">Starting time</label>
+                        <div class="input-group clockpicker">
+                            <asp:TextBox ID="txtStartingTime" runat="server" CssClass="form-control"></asp:TextBox>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-time"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="workTime" class="control-label col-xs-6">Hours worked</label>
+                         <div id="workTime" class="input-group">
+                            <asp:DropDownList runat="server" ID="ddlWorkTime" CssClass="form-control"/>  
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <asp:Button cssclass="btn btn-success" runat="server" ID="btnLogHours" Text="Save work"  OnClick="btnLogHours_Click" Enabled="false"/>
+                    </div>
+            </div>   
+            <asp:Label runat="server" ID="lblConfirmSave" />                  
             </div>                           
         </div>
     </div>
